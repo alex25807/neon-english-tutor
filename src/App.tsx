@@ -102,7 +102,8 @@ export default function App() {
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-neon to-pinky flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.5)]"><span className="font-display text-2xl text-white">👋</span></div>
           <h3 className="font-display text-xl text-neon neon-cyan uppercase mt-4">До встречи, герой!</h3>
           <p className="text-white/70 font-bold text-sm mt-3">{state.profile?.name}, весь прогресс сохранён!</p>
-          <div className="flex gap-3 mt-6"><NeonButton tone="dark" className="flex-1" onClick={() => setExitConfirm(false)}>Остаться</NeonButton><NeonButton tone="pink" className="flex-1" onClick={() => { setExitConfirm(false); window.close(); }}>Выйти</NeonButton></div>
+          <p className="text-white/50 font-bold text-xs mt-3">Чтобы выйти, закройте вкладку браузера вручную (Ctrl+W)</p>
+          <div className="flex gap-3 mt-6"><NeonButton tone="dark" className="flex-1" onClick={() => setExitConfirm(false)}>Остаться и играть</NeonButton><NeonButton tone="pink" className="flex-1" onClick={() => setExitConfirm(false)}>Закрыть</NeonButton></div>
         </div>
       </Modal>
     </div>
