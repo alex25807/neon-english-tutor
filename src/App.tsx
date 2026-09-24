@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import AIChat from "./components/AIChat";
 import ChatPanel from "./components/ChatPanel";
 import Hud, { type Tab } from "./components/Hud";
 import Onboarding from "./components/Onboarding";
@@ -84,7 +83,6 @@ export default function App() {
           <main className="relative z-10">
             {tab === "map" && <QuestMap state={state} onStart={(zone: Zone, quest: QuestDef) => { stopSpeaking(); setActive({ zone, quest }); }} onReview={() => { stopSpeaking(); setActive({ zone: ZONES[0], quest: null }); }} onLocked={(msg: string) => pushToast({ title: "Заперто!", desc: msg, tone: "pink" })} />}
             {tab === "chat" && <ChatPanel state={state} onAppend={(msgs: ChatMsg[]) => setState((s: GameState) => ({ ...s, chat: [...s.chat, ...msgs].slice(-120) }))} onToast={pushToast} />}
-            {tab === "ai" && <AIChat settings={state.settings} playerName={state.profile?.name ?? "герой"} />}
             {tab === "progress" && <ProgressTab state={state} />}
           </main>
         </>
