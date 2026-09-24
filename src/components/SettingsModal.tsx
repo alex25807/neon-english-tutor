@@ -1,7 +1,3 @@
---- src/components/SettingsModal.tsx (原始)
-
-
-+++ src/components/SettingsModal.tsx (修改后)
 import { speak, ttsSupported } from "../game/speech";
 import type { GameState, Settings } from "../game/types";
 import { IconSpeaker, VoltRobot } from "./icons";
@@ -42,7 +38,9 @@ export default function SettingsModal({ open, onClose, state, onPatch, onReset }
               </button>
             ))}
           </div>
-          <p className="text-[10px] font-bold text-white/40 mt-1.5">Выбор голоса зависит от доступных в вашем браузере</p>
+          <p className="text-[10px] font-bold text-white/40 mt-1.5">
+            💡 Для лучшего качества используйте Chrome или Edge. В Яндекс Браузере голосов меньше.
+          </p>
         </div>
 
         <div>
