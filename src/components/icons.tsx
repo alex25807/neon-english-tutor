@@ -25,7 +25,6 @@ export const IconRefresh = (p: P) => (<S {...p}><path d="M20 11A8 8 0 1 0 18.4 1
 export const IconArrowRight = (p: P) => (<S {...p}><path d="M4 12h15M13 5.5 19.5 12 13 18.5" strokeWidth={2.6} /></S>);
 export const IconSend = (p: P) => (<S {...p} fill><path d="M3 11.5 21 3l-6.5 18-3.2-7.3L3 11.5z" /></S>);
 export const IconSparkle = (p: P) => (<S {...p} fill><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2z" /></S>);
-export const IconTarget = (p: P) => (<S {...p}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /></S>);
 export const IconPortal = (p: P) => (<S {...p}><ellipse cx="12" cy="12" rx="9" ry="9" /><ellipse cx="12" cy="12" rx="5.5" ry="9" transform="rotate(35 12 12)" /><ellipse cx="12" cy="12" rx="5.5" ry="9" transform="rotate(-35 12 12)" /></S>);
 export const IconBoss = (p: P) => (<S {...p} fill><path d="M12 2a8 8 0 0 0-8 8v6l3 2v3l3-1.5L12 21l2-1.5L17 21v-3l3-2v-6a8 8 0 0 0-8-8z" /><circle cx="8.7" cy="10" r="1.9" fill="#0a0522" /><circle cx="15.3" cy="10" r="1.9" fill="#0a0522" /><path d="M8.5 15h7l-1.2 2h-4.6L8.5 15z" fill="#0a0522" /></S>);
 
@@ -55,14 +54,12 @@ export function PlayerAvatar({ idx, className }: { idx: number; className?: stri
   if (idx === 1) return (<svg viewBox="0 0 64 64" className={cls} aria-hidden="true"><path d="M16 18 10 6l14 6z" fill="#ff9f0a" /><path d="M48 18 54 6l-14 6z" fill="#ff9f0a" /><circle cx="32" cy="34" r="22" fill="#ffd60a" /><circle cx="24" cy="30" r="3.4" fill="#0a0522" /><circle cx="40" cy="30" r="3.4" fill="#0a0522" /><path d="M27 42q5 4 10 0" stroke="#0a0522" strokeWidth="2.5" fill="none" strokeLinecap="round" /><path d="M29 37h6l-3 4z" fill="#0a0522" /></svg>);
   if (idx === 2) return (<svg viewBox="0 0 64 64" className={cls} aria-hidden="true"><path d="M32 4 26 16h12L32 4z" fill="#a3ff12" /><circle cx="32" cy="36" r="22" fill="#22c55e" /><circle cx="24" cy="32" r="4" fill="#ffd60a" /><circle cx="40" cy="32" r="4" fill="#ffd60a" /><circle cx="24" cy="32" r="1.8" fill="#0a0522" /><circle cx="40" cy="32" r="1.8" fill="#0a0522" /><path d="M25 45q7 5 14 0" stroke="#0a0522" strokeWidth="2.5" fill="none" strokeLinecap="round" /><path d="M46 20l8-6-4 10z" fill="#a3ff12" /></svg>);
   if (idx === 3) return (<svg viewBox="0 0 64 64" className={cls} aria-hidden="true"><circle cx="32" cy="34" r="24" fill="#241464" stroke="#8b5cf6" strokeWidth="2.5" /><circle cx="32" cy="30" r="16" fill="#0a0522" stroke="#00e5ff" strokeWidth="2" /><circle cx="26" cy="28" r="3" fill="#00e5ff" /><circle cx="38" cy="28" r="3" fill="#00e5ff" /><path d="M27 35q5 3 10 0" stroke="#ff2ec4" strokeWidth="2.2" fill="none" strokeLinecap="round" /><rect x="24" y="52" width="16" height="8" rx="4" fill="#8b5cf6" /></svg>);
-  // Spider-Man
   return (
     <svg viewBox="0 0 64 64" className={cls} aria-hidden="true">
       <circle cx="32" cy="32" r="26" fill="#dc2626" stroke="#7f1d1d" strokeWidth="2" />
       <path d="M32 6 L32 58 M6 32 L58 32 M14 14 L50 50 M50 14 L14 50" stroke="#7f1d1d" strokeWidth="1" opacity="0.6" />
       <path d="M18 28 Q22 20 28 28 Q22 32 18 28 Z" fill="white" stroke="#0a0522" strokeWidth="1.5" />
       <path d="M36 28 Q42 20 46 28 Q42 32 36 28 Z" fill="white" stroke="#0a0522" strokeWidth="1.5" />
-      <path d="M20 30 L26 26 M44 30 L38 26" stroke="#0a0522" strokeWidth="0.8" opacity="0.5" />
     </svg>
   );
 }

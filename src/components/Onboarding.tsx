@@ -35,13 +35,10 @@ export default function Onboarding({ onComplete, state, onPatch }: { onComplete:
       <div className="w-full max-w-lg relative">
         {step === 0 && (
           <div className="anim-slide-up bg-deep/90 border-2 border-edge rounded-3xl p-8 shadow-[0_0_60px_rgba(139,92,246,0.3)]">
-            <button onClick={() => setSettingsOpen(true)} className="btn-arcade absolute top-4 right-4 w-10 h-10 rounded-xl bg-panel border-2 border-edge text-white/60 hover:text-neon hover:border-neon/60 flex items-center justify-center" aria-label="Настройки" title="Настройки"><IconGear className="w-5 h-5" /></button>
+            <button onClick={() => setSettingsOpen(true)} className="btn-arcade absolute top-4 right-4 w-10 h-10 rounded-xl bg-panel border-2 border-edge text-white/60 hover:text-neon hover:border-neon/60 flex items-center justify-center" aria-label="Настройки"><IconGear className="w-5 h-5" /></button>
             <div className="flex items-center gap-4 mb-2">
               <div className="anim-bobble shrink-0"><VoltRobot mood="cool" className="w-20 h-20" /></div>
-              <div>
-                <h1 className="font-display text-3xl leading-none"><span className="text-neon neon-cyan">NEON</span> <span className="text-pinky neon-pink">ENGLISH</span></h1>
-                <p className="text-white/70 font-bold text-sm mt-1">Квест-репетитор английского языка</p>
-              </div>
+              <div><h1 className="font-display text-3xl leading-none"><span className="text-neon neon-cyan">NEON</span> <span className="text-pinky neon-pink">ENGLISH</span></h1><p className="text-white/70 font-bold text-sm mt-1">Квест-репетитор английского языка</p></div>
             </div>
             <p className="text-white/80 font-semibold text-sm leading-relaxed mt-4">Привет! Я <span className="text-neon font-extrabold">Вольт</span> — твой робот-наставник. Мы пролетим шесть планет, победим боссов и выучим английский. Поехали!</p>
             <label className="block mt-6 text-xs font-display uppercase tracking-widest text-white/60">Как тебя зовут, герой?</label>
