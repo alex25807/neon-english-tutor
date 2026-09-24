@@ -1,7 +1,3 @@
---- src/game/speech.ts (原始)
-
-
-+++ src/game/speech.ts (修改后)
 export const ttsSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
 let voices: SpeechSynthesisVoice[] = [];
@@ -21,19 +17,13 @@ function pickVoice(lang: string, gender: "male" | "female" | "default" = "defaul
   const langVoices = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
   if (langVoices.length === 0) return null;
 
-  // Приоритет 1: Google voices (самые естественные)
   const googleVoices = langVoices.filter((v) => /google/i.test(v.name));
-
-  // Приоритет 2: Microsoft voices (тоже хорошие)
   const microsoftVoices = langVoices.filter((v) => /microsoft/i.test(v.name));
-
-  // Приоритет 3: Все остальные
   const pool = googleVoices.length > 0 ? googleVoices :
                microsoftVoices.length > 0 ? microsoftVoices :
                langVoices;
 
   if (gender === "default") {
-    // Для английского предпочитаем "en-US" голоса
     if (lang === "en-US") {
       const usVoice = pool.find((v) => v.lang === "en-US");
       if (usVoice) return usVoice;
@@ -41,12 +31,16 @@ function pickVoice(lang: string, gender: "male" | "female" | "default" = "defaul
     return pool[0];
   }
 
-  // Поиск по полу (по имени голоса)
   const maleKeywords = ["male", "man", "david", "mark", "daniel", "james", "alex", "fred", "tom", "george", "rishi", "guy"];
   const femaleKeywords = ["female", "woman", "zira", "susan", "samantha", "karen", "victoria", "fiona", "moira", "tessa", "linda", "kate"];
 
   const keywords = gender === "male" ? maleKeywords : femaleKeywords;
   const match = pool.find((v) => keywords.some((k) => v.name.toLowerCase().includes(k)));
+
+  if (!match && pool.length > 1) {
+    return gender === "male" ? pool[0] : pool[Math.min(1, pool.length - 1)];
+  }
+
   return match || pool[0];
 }
 
@@ -55,11 +49,7 @@ let activeUtterance: SpeechSynthesisUtterance | null = null;
 export function stopSpeaking() {
   if (!ttsSupported) return;
   activeUtterance = null;
-  try {
-    window.speechSynthesis.cancel();
-  } catch {
-    /* noop */
-  }
+  try { window.speechSynthesis.cancel(); } catch { /* noop */ }
 }
 
 export function speak(
@@ -67,19 +57,14 @@ export function speak(
   opts: { lang?: string; rate?: number; gender?: "male" | "female" | "default"; volume?: number } = {}
 ): Promise<void> {
   return new Promise((resolve) => {
-    if (!ttsSupported || !text) {
-      resolve();
-      return;
-    }
+    if (!ttsSupported || !text) { resolve(); return; }
     const lang = opts.lang ?? "en-US";
     const gender = opts.gender ?? "default";
     try {
       window.speechSynthesis.cancel();
 
-      // Добавляем паузы между словами для чёткости (только для английского)
       let processedText = text;
       if (lang.startsWith("en")) {
-        // Заменяем точки и запятые на более длинные паузы
         processedText = text.replace(/\./g, "... ").replace(/,/g, ",, ");
       }
 
@@ -88,7 +73,7 @@ export function speak(
       const v = pickVoice(lang, gender);
       if (v) u.voice = v;
       u.rate = opts.rate ?? 0.85;
-      u.pitch = lang.startsWith("en") ? 1.0 : 1.05; // Более естественный pitch для английского
+      u.pitch = lang.startsWith("en") ? 1.0 : 1.05;
       u.volume = opts.volume ?? 1.0;
       activeUtterance = u;
       const done = () => {
@@ -98,15 +83,11 @@ export function speak(
       u.onend = done;
       u.onerror = done;
       window.speechSynthesis.speak(u);
-      // страховка на случай, если onend не сработает
       window.setTimeout(done, Math.max(4000, processedText.length * 160));
-    } catch {
-      resolve();
-    }
+    } catch { resolve(); }
   });
 }
 
-// ---------- распознавание речи ----------
 type SR = {
   lang: string;
   continuous: boolean;
@@ -138,11 +119,7 @@ export function startListening(opts: {
   const Ctor = getSR();
   if (!Ctor) return null;
   let rec: SR;
-  try {
-    rec = new Ctor();
-  } catch {
-    return null;
-  }
+  try { rec = new Ctor(); } catch { return null; }
   rec.lang = opts.lang;
   rec.continuous = false;
   rec.interimResults = true;
@@ -158,29 +135,16 @@ export function startListening(opts: {
   };
   rec.onend = () => opts.onEnd();
   rec.onerror = (e) => opts.onError?.(e.error ?? "unknown");
-  try {
-    rec.start();
-  } catch {
-    return null;
-  }
+  try { rec.start(); } catch { return null; }
   return {
     stop: () => {
-      try {
-        rec.stop();
-      } catch {
-        /* noop */
-      }
+      try { rec.stop(); } catch { /* noop */ }
     },
   };
 }
 
-// ---------- сравнение произнесённого ----------
 export function normalizeSpoken(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-zа-яё\s]/gi, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return s.toLowerCase().replace(/[^a-zа-яё\s]/gi, "").replace(/\s+/g, " ").trim();
 }
 
 function levenshtein(a: string, b: string): number {
@@ -208,7 +172,6 @@ export function speechMatches(target: string, heard: string): boolean {
   if (!t || !h) return false;
   if (t === h) return true;
   if (h.includes(t) || (t.length > 3 && t.includes(h))) return true;
-  // проверяем каждое слово услышанного
   const words = h.split(" ");
   if (words.some((w) => w === t)) return true;
   const tolerance = Math.max(1, Math.ceil(t.length * 0.34));
