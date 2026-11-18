@@ -1,7 +1,7 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 
 type P = { className?: string };
-const S = (props: P & { children: React.ReactNode; vb?: string; fill?: boolean }) => (
+const S = (props: P & { children: ReactNode; vb?: string; fill?: boolean }) => (
   <svg viewBox={props.vb ?? "0 0 24 24"} className={props.className ?? "w-5 h-5"} fill={props.fill ? "currentColor" : "none"} stroke={props.fill ? "none" : "currentColor"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{props.children}</svg>
 );
 

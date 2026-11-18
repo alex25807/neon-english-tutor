@@ -166,15 +166,32 @@ function levenshtein(a: string, b: string): number {
   return dp[m][n];
 }
 
+function similarEnough(target: string, candidate: string): boolean {
+  if (!target || !candidate) return false;
+  if (target === candidate) return true;
+  const minLen = Math.ceil(target.length * 0.7);
+  if (candidate.length < Math.max(2, minLen)) return false;
+  const tolerance = Math.max(1, Math.ceil(target.length * 0.34));
+  return levenshtein(target, candidate) <= tolerance;
+}
+
 export function speechMatches(target: string, heard: string): boolean {
   const t = normalizeSpoken(target);
   const h = normalizeSpoken(heard);
   if (!t || !h) return false;
   if (t === h) return true;
-  if (h.includes(t) || (t.length > 3 && t.includes(h))) return true;
-  const words = h.split(" ");
-  if (words.some((w) => w === t)) return true;
-  const tolerance = Math.max(1, Math.ceil(t.length * 0.34));
-  if (levenshtein(t, h) <= tolerance) return true;
-  return words.some((w) => levenshtein(t, w) <= tolerance);
+
+  const tWords = t.split(" ");
+  const hWords = h.split(" ");
+
+  if (hWords.length >= tWords.length) {
+    for (let i = 0; i <= hWords.length - tWords.length; i++) {
+      const slice = hWords.slice(i, i + tWords.length);
+      if (slice.every((w, j) => w === tWords[j])) return true;
+    }
+  }
+
+  if (similarEnough(t, h)) return true;
+  if (tWords.length === 1) return hWords.some((w) => similarEnough(t, w));
+  return false;
 }

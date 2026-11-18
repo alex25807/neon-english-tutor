@@ -62,7 +62,7 @@ export default function Onboarding({ onComplete, state, onPatch }: { onComplete:
           <div className="anim-slide-up bg-deep/90 border-2 border-limey/60 rounded-3xl p-8 text-center shadow-[0_0_60px_rgba(163,255,18,0.25)]">
             <VoltRobot mood="wow" className="w-20 h-20 mx-auto anim-bobble" />
             <h2 className="font-display text-2xl text-limey neon-lime uppercase mt-4">Готово!</h2>
-            <p className="text-white/80 font-bold text-sm mt-3">Привет, <span className="text-neon">{name}</span>! Твой стартовый уровень — <span className="text-goldy font-extrabold">{startLevel}</span>. Поехали покорять галактику!</p>
+            <p className="text-white/80 font-bold text-sm mt-3">Привет, <span className="text-neon">{name}</span>! Твой стартовый уровень — <span className="text-goldy font-extrabold">{startLevel}</span>. {startLevel >= 3 ? "Тебе уже открыты первые три планеты!" : startLevel === 2 ? "Планета зверей уже открыта — можно идти дальше!" : "Поехали покорять галактику!"}</p>
             <div className="mt-7"><NeonButton tone="cyan" size="lg" className="w-full" onClick={() => onComplete({ name: name.trim(), avatar }, startLevel)}><IconCheck className="w-5 h-5" /> Начать приключение <IconArrowRight className="w-5 h-5" /></NeonButton></div>
           </div>
         )}

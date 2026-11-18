@@ -4,14 +4,14 @@ import Hud, { type Tab } from "./components/Hud";
 import Onboarding from "./components/Onboarding";
 import ProgressTab from "./components/ProgressTab";
 import QuestMap from "./components/QuestMap";
-import QuestPlayer, { type FinishPayload } from "./components/QuestPlayer";
+import QuestPlayer from "./components/QuestPlayer";
 import SettingsModal from "./components/SettingsModal";
 import { Confetti, Modal, NeonButton, ToastHost } from "./components/ui";
 import { ACHIEVEMENTS, ZONES } from "./game/content";
-import { checkAchievements, dueWords, emptyCard, levelInfo, updCard } from "./game/engine";
+import { applyQuestFinish, checkAchievements, dueWords, xpToReachLevel } from "./game/engine";
 import { stopSpeaking } from "./game/speech";
-import { defaultState, loadState, saveState, todayStr, yesterdayStr } from "./game/storage";
-import type { ChatMsg, GameState, QuestDef, Settings, Toast, Zone } from "./game/types";
+import { defaultState, loadState, saveState, todayStr } from "./game/storage";
+import type { ChatMsg, FinishPayload, GameState, QuestDef, Settings, Toast, Zone } from "./game/types";
 
 function SpaceBg() {
   return (<div className="fixed inset-0 z-0 bg-space overflow-hidden pointer-events-none"><div className="stars" /><div className="stars2" /><div className="grid-floor" /></div>);
@@ -34,37 +34,32 @@ export default function App() {
   const pushToast = (t: Omit<Toast, "id">) => { const id = ++toastId.current; setToasts((ts) => [...ts.slice(-2), { ...t, id }]); window.setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 4000); };
 
   const handleOnboarding = (profile: { name: string; avatar: number }, startLevel: number) => {
-    setState((s) => ({ ...s, profile, startLevel, streak: { count: 1, lastDay: todayStr() } }));
+    setState((s) => {
+      const drafted: GameState = {
+        ...s,
+        profile,
+        startLevel,
+        xp: Math.max(s.xp, xpToReachLevel(startLevel)),
+        streak: { count: 1, lastDay: todayStr() },
+      };
+      const unlocked = checkAchievements(drafted);
+      return unlocked.length ? { ...drafted, achievements: [...drafted.achievements, ...unlocked] } : drafted;
+    });
     pushToast({ title: "Добро пожаловать!", desc: profile.name + ", твой путь героя начинается!", tone: "cyan" });
   };
 
   const finishQuest = (p: FinishPayload) => {
-    setState((s: GameState) => {
-      const now = Date.now();
-      const next = { ...s, xp: s.xp + p.stats.xpEarned, coins: s.coins + p.stats.coinsEarned, speakDone: s.speakDone + p.stats.speakCount };
-      const prevLevel = levelInfo(s.xp).level;
-      const newLevel = levelInfo(next.xp).level;
-      if (newLevel > prevLevel) { setLevelUpFx(true); window.setTimeout(() => setLevelUpFx(false), 3500); pushToast({ title: "Уровень " + newLevel + "!", desc: "Ты стал сильнее!", tone: "gold" }); }
-      for (const [wid, ok] of Object.entries(p.wordResults)) { const w = next.cards[wid] ?? emptyCard(); next.cards[wid] = updCard(w, ok as boolean, now); }
-      for (const [wid, count] of Object.entries(p.wrongCounts)) next.mistakes[wid] = (next.mistakes[wid] ?? 0) + (count as number);
-      if (p.questId) {
-        const prev = next.quests[p.questId] ?? { stars: 0, done: 0 };
-        const total = p.stats.correct + p.stats.wrong;
-        const acc = total ? p.stats.correct / total : 1;
-        const stars = acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : 1;
-        next.quests[p.questId] = { stars: Math.max(prev.stars, stars), done: prev.done + 1 };
-      }
-      if (p.perfect) next.perfects += 1;
-      if (p.questId?.endsWith("-3") && p.stats.correct > 0) next.bossesDown += 1;
-      const today = todayStr();
-      if (next.streak.lastDay !== today) next.streak = { count: next.streak.lastDay === yesterdayStr() ? next.streak.count + 1 : 1, lastDay: today };
-      const fresh = checkAchievements(next);
-      if (fresh.length) {
-        next.achievements = [...next.achievements, ...fresh];
-        fresh.forEach((id: string) => { const a = ACHIEVEMENTS.find((x: { id: string }) => x.id === id); if (a) pushToast({ title: a.name, desc: a.desc, tone: "gold" }); });
-      }
-      return next;
-    });
+    const { state: next, effects } = applyQuestFinish(state, p);
+    setState(next);
+    if (effects.leveledUpTo) {
+      setLevelUpFx(true);
+      window.setTimeout(() => setLevelUpFx(false), 3500);
+      pushToast({ title: "Уровень " + effects.leveledUpTo + "!", desc: "Ты стал сильнее!", tone: "gold" });
+    }
+    for (const id of effects.newAchievements) {
+      const a = ACHIEVEMENTS.find((x) => x.id === id);
+      if (a) pushToast({ title: a.name, desc: a.desc, tone: "gold" });
+    }
   };
 
   const doReset = () => { setState(defaultState()); setResetConfirm(false); setExitConfirm(false); };

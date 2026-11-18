@@ -1,5 +1,6 @@
 import { GAP_TASKS, SENTENCES, WORDS_BY_TOPIC, ZONES } from "./content";
-import type { CardState, Exercise, GameState, QuestDef, Word, Zone } from "./types";
+import { todayStr, yesterdayStr } from "./storage";
+import type { CardState, Exercise, FinishEffects, FinishPayload, GameState, QuestDef, Word, Zone } from "./types";
 
 export const SRS_INTERVALS = [0, 10 * 60_000, 60 * 60_000, 12 * 3_600_000, 86_400_000, 3 * 86_400_000];
 
@@ -23,6 +24,13 @@ export function masteredCount(state: GameState): number {
 }
 
 export function xpNeed(level: number): number { return 80 + (level - 1) * 40; }
+
+export function xpToReachLevel(level: number): number {
+  const target = Math.max(1, Math.floor(level));
+  let xp = 0;
+  for (let l = 1; l < target; l++) xp += xpNeed(l);
+  return xp;
+}
 
 export function levelInfo(xp: number): { level: number; into: number; need: number } {
   let level = 1; let rest = xp;
@@ -177,4 +185,74 @@ export function checkAchievements(state: GameState): string[] {
   if (bossesDownCount(state) >= 1) add("boss1"); if (bossesDownCount(state) >= 6) add("bossall");
   if (state.speakDone >= 10) add("voice10"); if (state.perfects >= 1) add("perfect");
   return fresh;
+}
+
+export function matchStepResults(pairs: Word[], errorIds: Iterable<string>): {
+  wordResults: Record<string, boolean>;
+  wrongWords: Word[];
+  allCorrect: boolean;
+} {
+  const errors = errorIds instanceof Set ? errorIds : new Set(errorIds);
+  const wordResults: Record<string, boolean> = {};
+  const wrongWords: Word[] = [];
+  for (const w of pairs) {
+    const ok = !errors.has(w.id);
+    wordResults[w.id] = ok;
+    if (!ok) wrongWords.push(w);
+  }
+  return { wordResults, wrongWords, allCorrect: wrongWords.length === 0 };
+}
+
+export function applyQuestFinish(
+  state: GameState,
+  payload: FinishPayload,
+  now = Date.now(),
+  today = todayStr(),
+  yesterday = yesterdayStr(),
+): { state: GameState; effects: FinishEffects } {
+  const prevLevel = levelInfo(state.xp).level;
+  const cards = { ...state.cards };
+  for (const [wid, ok] of Object.entries(payload.wordResults)) {
+    cards[wid] = updCard(cards[wid] ?? emptyCard(), ok, now);
+  }
+  const mistakes = { ...state.mistakes };
+  for (const [wid, count] of Object.entries(payload.wrongCounts)) {
+    mistakes[wid] = (mistakes[wid] ?? 0) + count;
+  }
+  const quests = { ...state.quests };
+  if (payload.completed && payload.questId) {
+    const prev = quests[payload.questId] ?? { stars: 0, done: 0 };
+    const total = payload.stats.correct + payload.stats.wrong;
+    const acc = total ? payload.stats.correct / total : 1;
+    const stars = acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : 1;
+    quests[payload.questId] = { stars: Math.max(prev.stars, stars), done: prev.done + 1 };
+  }
+  const streak = state.streak.lastDay === today
+    ? state.streak
+    : { count: state.streak.lastDay === yesterday ? state.streak.count + 1 : 1, lastDay: today };
+
+  const drafted: GameState = {
+    ...state,
+    xp: state.xp + payload.stats.xpEarned,
+    coins: state.coins + payload.stats.coinsEarned,
+    speakDone: state.speakDone + payload.stats.speakCount,
+    cards,
+    mistakes,
+    quests,
+    streak,
+    perfects: state.perfects + (payload.completed && payload.perfect ? 1 : 0),
+    bossesDown: state.bossesDown + (payload.completed && payload.questId?.endsWith("-3") && payload.stats.correct > 0 ? 1 : 0),
+  };
+  const newAchievements = checkAchievements(drafted);
+  const next: GameState = newAchievements.length
+    ? { ...drafted, achievements: [...drafted.achievements, ...newAchievements] }
+    : drafted;
+  const newLevel = levelInfo(next.xp).level;
+  return {
+    state: next,
+    effects: {
+      leveledUpTo: newLevel > prevLevel ? newLevel : null,
+      newAchievements,
+    },
+  };
 }

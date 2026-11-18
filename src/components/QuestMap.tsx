@@ -1,5 +1,6 @@
+import type { ReactNode } from "react";
 import { ZONES } from "../game/content";
-import { levelInfo, questDoneCount, questUnlocked, zoneUnlocked } from "../game/engine";
+import { dueWords, levelInfo, questDoneCount, questUnlocked, zoneUnlocked } from "../game/engine";
 import type { GameState, QuestDef, Zone } from "../game/types";
 import { IconCheck, IconFlame, IconLock, IconPlay, IconPortal, IconRocket, IconStar, IconTrophy, Planet, VoltRobot } from "./icons";
 import { NeonButton } from "./ui";
@@ -7,7 +8,7 @@ import { NeonButton } from "./ui";
 export default function QuestMap({ state, onStart, onReview, onLocked }: { state: GameState; onStart: (zone: Zone, quest: QuestDef) => void; onReview: () => void; onLocked: (msg: string) => void }) {
   const li = levelInfo(state.xp);
   const done = questDoneCount(state);
-  const due = Object.values(state.cards).filter((c) => c.seen > 0 && c.due <= Date.now()).length;
+  const due = dueWords(state).length;
   return (
     <div className="px-4 max-w-5xl mx-auto w-full py-6">
       <div className="flex items-center gap-4 flex-wrap mb-6">
@@ -64,6 +65,6 @@ export default function QuestMap({ state, onStart, onReview, onLocked }: { state
   );
 }
 
-function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
+function StatCard({ icon, value, label }: { icon: ReactNode; value: number; label: string }) {
   return (<div className="bg-panel border-2 border-edge rounded-xl px-3 py-2.5 flex items-center gap-2">{icon}<div><div className="font-display text-lg text-white leading-none">{value}</div><div className="text-[9px] font-extrabold uppercase tracking-widest text-white/40 mt-0.5">{label}</div></div></div>);
 }

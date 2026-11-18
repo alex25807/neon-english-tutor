@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { WORDS } from "../game/content";
 import { bossesDownCount, levelInfo, masteredCount, questDoneCount, starsCount } from "../game/engine";
 import { speak } from "../game/speech";
@@ -48,6 +49,6 @@ export default function ProgressTab({ state }: { state: GameState }) {
   );
 }
 
-function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
+function StatCard({ icon, value, label }: { icon: ReactNode; value: number; label: string }) {
   return (<div className="bg-panel border-2 border-edge rounded-xl p-4 flex items-center gap-3">{icon}<div><div className="font-display text-2xl text-white leading-none">{value}</div><div className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 mt-1">{label}</div></div></div>);
 }
