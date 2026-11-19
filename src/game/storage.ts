@@ -37,5 +37,19 @@ export function saveState(s: GameState): void {
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* noop */ }
 }
 
-export function todayStr(): string { return new Date().toISOString().slice(0, 10); }
-export function yesterdayStr(): string { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10); }
+export function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function todayStr(now = new Date()): string {
+  return formatLocalDate(now);
+}
+
+export function yesterdayStr(now = new Date()): string {
+  const d = new Date(now.getTime());
+  d.setDate(d.getDate() - 1);
+  return formatLocalDate(d);
+}

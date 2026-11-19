@@ -111,6 +111,20 @@ export interface RunStats {
   speakCount: number;
 }
 
+export interface FinishPayload {
+  questId: string | null;
+  stats: RunStats;
+  wordResults: Record<string, boolean>;
+  wrongCounts: Record<string, number>;
+  perfect: boolean;
+  completed: boolean;
+}
+
+export interface FinishEffects {
+  leveledUpTo: number | null;
+  newAchievements: string[];
+}
+
 export interface Toast {
   id: number;
   title: string;

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { GameState } from "../game/types";
 import { levelInfo } from "../game/engine";
 import { IconBolt, IconChat, IconFlame, IconGear, IconMap, IconTrophy, IconX, PlayerAvatar } from "./icons";
@@ -6,7 +7,7 @@ export type Tab = "map" | "chat" | "progress";
 
 export default function Hud({ state, tab, onTab, onSettings, onExit, dueCount }: { state: GameState; tab: Tab; onTab: (t: Tab) => void; onSettings: () => void; onExit: () => void; dueCount: number }) {
   const li = levelInfo(state.xp);
-  const tabs: { id: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
+  const tabs: { id: Tab; label: string; icon: ReactNode; badge?: number }[] = [
     { id: "map", label: "Карта", icon: <IconMap className="w-4 h-4" />, badge: dueCount },
     { id: "chat", label: "Чат с Вольтом", icon: <IconChat className="w-4 h-4" /> },
     { id: "progress", label: "Успехи", icon: <IconTrophy className="w-4 h-4" /> },
