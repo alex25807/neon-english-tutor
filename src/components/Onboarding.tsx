@@ -67,7 +67,7 @@ export default function Onboarding({ onComplete, state, onPatch }: { onComplete:
           </div>
         )}
       </div>
-      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} state={state} onPatch={onPatch} onReset={() => {}} />
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} state={state} onPatch={onPatch} onReset={() => {}} showReset={false} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { GameState } from "../game/types";
 import { levelInfo } from "../game/engine";
-import { IconBolt, IconChat, IconFlame, IconGear, IconMap, IconTrophy, IconX, PlayerAvatar } from "./icons";
+import { IconBolt, IconChat, IconFlame, IconGear, IconHeart, IconMap, IconTrophy, IconX, PlayerAvatar } from "./icons";
 
 export type Tab = "map" | "chat" | "progress";
 
@@ -22,6 +22,7 @@ export default function Hud({ state, tab, onTab, onSettings, onExit, dueCount }:
         <div className="flex-1" />
         <div className="flex items-center gap-1.5 bg-panel border-2 border-edge rounded-xl px-3 py-2"><IconFlame className={`w-4.5 h-4.5 ${state.streak.count > 0 ? "text-hot drop-shadow-[0_0_6px_rgba(255,84,112,0.9)]" : "text-white/25"}`} /><span className="font-display text-sm text-white">{state.streak.count}</span></div>
         <div className="flex items-center gap-1.5 bg-panel border-2 border-edge rounded-xl px-3 py-2"><IconBolt className="w-4.5 h-4.5 text-goldy drop-shadow-[0_0_6px_rgba(255,214,10,0.9)]" /><span className="font-display text-sm text-goldy">{state.coins}</span></div>
+        {(state.boosts?.extraHearts ?? 0) > 0 && <div className="flex items-center gap-1.5 bg-panel border-2 border-hot/40 rounded-xl px-3 py-2" title="Запасные сердца"><IconHeart className="w-4.5 h-4.5 text-hot drop-shadow-[0_0_6px_rgba(255,84,112,0.9)]" /><span className="font-display text-sm text-hot">{state.boosts.extraHearts}</span></div>}
         <div className="flex items-center gap-2.5 bg-panel border-2 border-neon/50 rounded-xl px-3 py-1.5 glow-ring">
           <div className="w-9 h-9 rounded-lg bg-deep border-2 border-neon flex items-center justify-center font-display text-neon text-sm shadow-[0_0_10px_rgba(0,229,255,0.5)]">{li.level}</div>
           <div className="w-24"><div className="text-[9px] font-display uppercase tracking-widest text-white/50 leading-none">Уровень</div><div className="h-2 mt-1 rounded-full bg-[#0d0730] border border-edge overflow-hidden"><div className="h-full bg-neon shadow-[0_0_8px_rgba(0,229,255,0.9)] transition-all duration-700" style={{ width: `${(li.into / li.need) * 100}%` }} /></div></div>

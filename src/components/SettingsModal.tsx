@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { speak, ttsSupported } from "../game/speech";
 import type { GameState, Settings } from "../game/types";
 import { IconSpeaker, VoltRobot } from "./icons";
@@ -17,8 +18,20 @@ function Toggle({ on, onClick, label, desc }: { on: boolean; onClick: () => void
   );
 }
 
-export default function SettingsModal({ open, onClose, state, onPatch, onReset }: { open: boolean; onClose: () => void; state: GameState; onPatch: (p: Partial<Settings>) => void; onReset: () => void }) {
+export default function SettingsModal({ open, onClose, state, onPatch, onReset, onExport, onImport, showReset = true }: {
+  open: boolean;
+  onClose: () => void;
+  state: GameState;
+  onPatch: (p: Partial<Settings>) => void;
+  onReset: () => void;
+  onExport?: () => void;
+  onImport?: (raw: string) => boolean;
+  showReset?: boolean;
+}) {
   const s = state.settings;
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [importMsg, setImportMsg] = useState<"ok" | "bad" | null>(null);
+  useEffect(() => { if (!open) setImportMsg(null); }, [open]);
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex items-center gap-3">
@@ -59,11 +72,32 @@ export default function SettingsModal({ open, onClose, state, onPatch, onReset }
         </div>
 
         <div className="rounded-xl border-2 border-edge bg-panel px-4 py-3 text-[11px] font-bold text-white/55 leading-relaxed">
-          Весь прогресс — опыт, слова, серия дней, достижения и чат — сохраняется автоматически в этом браузере.
+          Весь прогресс — опыт, слова, серия дней, достижения и чат — сохраняется автоматически в этом браузере. Скачай копию, если хочешь открыть игру на другом устройстве.
         </div>
-        <div className="border-t-2 border-edge pt-4">
-          <NeonButton tone="dark" className="w-full" onClick={onReset}>Сбросить весь прогресс</NeonButton>
-        </div>
+        {(onExport || onImport) && (
+          <div className="flex gap-2">
+            {onExport && <NeonButton tone="dark" className="flex-1" onClick={onExport}>Скачать прогресс</NeonButton>}
+            {onImport && (
+              <>
+                <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  const text = await file.text();
+                  setImportMsg(onImport(text) ? "ok" : "bad");
+                }} />
+                <NeonButton tone="violet" className="flex-1" onClick={() => fileRef.current?.click()}>Загрузить</NeonButton>
+              </>
+            )}
+          </div>
+        )}
+        {importMsg === "ok" && <p className="text-limey font-bold text-xs">Прогресс загружен!</p>}
+        {importMsg === "bad" && <p className="text-hot font-bold text-xs">Файл не подошёл. Нужен сохранённый JSON этой игры.</p>}
+        {showReset && (
+          <div className="border-t-2 border-edge pt-4">
+            <NeonButton tone="dark" className="w-full" onClick={onReset}>Сбросить весь прогресс</NeonButton>
+          </div>
+        )}
       </div>
     </Modal>
   );

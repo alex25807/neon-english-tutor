@@ -6,6 +6,7 @@ export interface Word {
   ru: string;
   topic: TopicId;
   lvl: 1 | 2 | 3;
+  emoji: string;
 }
 
 export interface QuestDef {
@@ -97,6 +98,7 @@ export interface GameState {
   perfects: number;
   chat: ChatMsg[];
   settings: Settings;
+  boosts: { extraHearts: number };
   createdAt: number;
 }
 

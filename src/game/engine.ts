@@ -203,6 +203,22 @@ export function matchStepResults(pairs: Word[], errorIds: Iterable<string>): {
   return { wordResults, wrongWords, allCorrect: wrongWords.length === 0 };
 }
 
+export const EXTRA_HEART_COST = 25;
+export const BASE_HEARTS = 3;
+
+export function questStartHearts(bonusHearts: number, isRetry = false): number {
+  return BASE_HEARTS + (isRetry ? 0 : Math.max(0, bonusHearts));
+}
+
+export function buyExtraHeart(state: GameState): GameState | null {
+  if (state.coins < EXTRA_HEART_COST) return null;
+  return {
+    ...state,
+    coins: state.coins - EXTRA_HEART_COST,
+    boosts: { extraHearts: (state.boosts?.extraHearts ?? 0) + 1 },
+  };
+}
+
 export function applyQuestFinish(
   state: GameState,
   payload: FinishPayload,
