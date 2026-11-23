@@ -8,6 +8,7 @@ const W = (topic: TopicId, lvl: 1 | 2 | 3, en: string, ru: string, emoji: string
 export const TOPIC_NAMES: Record<TopicId, string> = {
   greet: "Приветствия", animals: "Животные", food: "Еда",
   colors: "Цвета и числа", family: "Семья и дом", actions: "Действия",
+  yesterday: "Вчера", stories: "Истории", memories: "Воспоминания", trips: "Поездки",
 };
 
 export const WORDS: Word[] = [
@@ -59,6 +60,33 @@ export const WORDS: Word[] = [
   W("actions", 2, "drink", "пить", "🥤"), W("actions", 2, "sleep", "спать", "😴"),
   W("actions", 2, "draw", "рисовать", "🎨"), W("actions", 2, "climb", "карабкаться", "🧗"),
   W("actions", 3, "throw", "бросать", "🤾"), W("actions", 3, "catch", "ловить", "⚾"),
+  W("yesterday", 1, "yesterday", "вчера", "📅"), W("yesterday", 1, "happy", "счастливый", "😊"),
+  W("yesterday", 1, "sad", "грустный", "😢"), W("yesterday", 1, "tired", "усталый", "😴"),
+  W("yesterday", 1, "school", "школа", "🏫"), W("yesterday", 1, "home", "дома", "🏡"),
+  W("yesterday", 2, "angry", "злой", "😠"), W("yesterday", 2, "bored", "скучающий", "😐"),
+  W("yesterday", 2, "scared", "испуганный", "😨"), W("yesterday", 2, "cinema", "кинотеатр", "🎬"),
+  W("yesterday", 2, "shop", "магазин", "🛍️"), W("yesterday", 2, "park", "парк", "🏞️"),
+  W("yesterday", 3, "first", "первый", "1️⃣"), W("yesterday", 3, "second", "второй", "2️⃣"),
+  W("yesterday", 3, "third", "третий", "3️⃣"), W("yesterday", 3, "birthday", "день рождения", "🎂"),
+  W("yesterday", 3, "Monday", "понедельник", "📆"), W("yesterday", 3, "Sunday", "воскресенье", "🌞"),
+  W("stories", 1, "walked", "ходил", "🚶"), W("stories", 1, "played", "играл", "🎲"),
+  W("stories", 1, "cooked", "готовил", "👨‍🍳"), W("stories", 1, "visited", "навестил", "🚪"),
+  W("stories", 2, "started", "начал", "🚦"), W("stories", 2, "finished", "закончил", "🏁"),
+  W("stories", 2, "story", "история", "📚"), W("stories", 2, "dream", "сон", "💭"),
+  W("stories", 3, "hare", "заяц", "🐇"), W("stories", 3, "tortoise", "черепаха", "🐢"),
+  W("stories", 3, "night", "ночь", "🌃"), W("stories", 3, "ago", "назад", "⏳"),
+  W("memories", 1, "went", "пошёл", "🚶‍♂️"), W("memories", 1, "saw", "увидел", "👀"),
+  W("memories", 1, "ate", "ел", "🍽️"), W("memories", 1, "had", "имел", "🎁"),
+  W("memories", 2, "made", "сделал", "🛠️"), W("memories", 2, "best", "лучший", "🥇"),
+  W("memories", 2, "biggest", "самый большой", "🐘"), W("memories", 2, "year", "год", "🗓️"),
+  W("memories", 3, "ride", "аттракцион", "🎢"), W("memories", 3, "fair", "ярмарка", "🎡"),
+  W("memories", 3, "class", "класс", "🧑‍🏫"), W("memories", 3, "day", "день", "🌤️"),
+  W("trips", 1, "holiday", "каникулы", "🏖️"), W("trips", 1, "sunny", "солнечно", "☀️"),
+  W("trips", 1, "rainy", "дождливо", "🌧️"), W("trips", 1, "bag", "сумка", "🎒"),
+  W("trips", 2, "cloudy", "облачно", "☁️"), W("trips", 2, "tent", "палатка", "⛺"),
+  W("trips", 2, "travel", "путешествовать", "✈️"), W("trips", 2, "tomorrow", "завтра", "⏩"),
+  W("trips", 3, "Russia", "Россия", "🇷🇺"), W("trips", 3, "England", "Англия", "🇬🇧"),
+  W("trips", 3, "France", "Франция", "🇫🇷"), W("trips", 3, "where", "где", "📍"),
 ];
 
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.id, w]));
@@ -73,6 +101,10 @@ export const ZONES: Zone[] = [
   { id: "colors", title: "Город Цвета и Чисел", subtitle: "Код неоновых огней", reqLevel: 4, hue: "#ff2ec4", hue2: "#ff5470", ring: true, quests: [{ id: "colors-1", zone: "colors", title: "Огни города", kind: "lesson", steps: 9 }, { id: "colors-2", zone: "colors", title: "Шифр чисел", kind: "lesson", steps: 10 }, { id: "colors-3", zone: "colors", title: "Босс: Пиксель-Фантом", kind: "boss", steps: 12 }] },
   { id: "family", title: "Замок Семьи", subtitle: "Команда героя", reqLevel: 5, hue: "#8b5cf6", hue2: "#c084fc", ring: false, quests: [{ id: "family-1", zone: "family", title: "Жители замка", kind: "lesson", steps: 9 }, { id: "family-2", zone: "family", title: "Карта комнат", kind: "lesson", steps: 10 }, { id: "family-3", zone: "family", title: "Босс: Теневой Рыцарь", kind: "boss", steps: 12 }] },
   { id: "actions", title: "Арена Действий", subtitle: "Суперспособности", reqLevel: 6, hue: "#00e5ff", hue2: "#ff2ec4", ring: true, quests: [{ id: "actions-1", zone: "actions", title: "Тренировка героев", kind: "lesson", steps: 9 }, { id: "actions-2", zone: "actions", title: "Полоса препятствий", kind: "lesson", steps: 10 }, { id: "actions-3", zone: "actions", title: "Босс: Нео-Дракон", kind: "boss", steps: 12 }] },
+  { id: "yesterday", title: "Планета Вчера", subtitle: "Где ты был вчера?", reqLevel: 7, hue: "#c084fc", hue2: "#7c3aed", ring: false, quests: [{ id: "yesterday-1", zone: "yesterday", title: "Следы в календаре", kind: "lesson", steps: 9 }, { id: "yesterday-2", zone: "yesterday", title: "Карта чувств", kind: "lesson", steps: 10 }, { id: "yesterday-3", zone: "yesterday", title: "Босс: Хроно-Глитч", kind: "boss", steps: 12 }] },
+  { id: "stories", title: "Лес Сказок", subtitle: "Что случилось ночью", reqLevel: 8, hue: "#38bdf8", hue2: "#0369a1", ring: true, quests: [{ id: "stories-1", zone: "stories", title: "След на тропе", kind: "lesson", steps: 9 }, { id: "stories-2", zone: "stories", title: "Конец главы", kind: "lesson", steps: 10 }, { id: "stories-3", zone: "stories", title: "Босс: Сонный Сфинкс", kind: "boss", steps: 12 }] },
+  { id: "memories", title: "Остров Воспоминаний", subtitle: "Лучший день года", reqLevel: 9, hue: "#f472b6", hue2: "#db2777", ring: false, quests: [{ id: "memories-1", zone: "memories", title: "Яркий кадр", kind: "lesson", steps: 9 }, { id: "memories-2", zone: "memories", title: "Самый-самый", kind: "lesson", steps: 10 }, { id: "memories-3", zone: "memories", title: "Босс: Архив-Титан", kind: "boss", steps: 12 }] },
+  { id: "trips", title: "Портал Поездок", subtitle: "Куда летим дальше?", reqLevel: 10, hue: "#fb923c", hue2: "#c2410c", ring: true, quests: [{ id: "trips-1", zone: "trips", title: "Сбор чемодана", kind: "lesson", steps: 9 }, { id: "trips-2", zone: "trips", title: "Прогноз и план", kind: "lesson", steps: 10 }, { id: "trips-3", zone: "trips", title: "Босс: Навигатор-Фантом", kind: "boss", steps: 12 }] },
 ];
 
 export const SENTENCES: Sentence[] = [
@@ -88,6 +120,18 @@ export const SENTENCES: Sentence[] = [
   { id: "s10", en: "He runs fast", ru: "Он бегает быстро", topic: "actions", lvl: 2, tokens: ["He", "runs", "fast"], distractor: "cake" },
   { id: "s11", en: "I drink apple juice", ru: "Я пью яблочный сок", topic: "food", lvl: 2, tokens: ["I", "drink", "apple", "juice"], distractor: "door" },
   { id: "s12", en: "The dog likes milk", ru: "Собака любит молоко", topic: "animals", lvl: 2, tokens: ["The", "dog", "likes", "milk"], distractor: "ten" },
+  { id: "s13", en: "I was at home", ru: "Я был дома", topic: "yesterday", lvl: 1, tokens: ["I", "was", "at", "home"], distractor: "were" },
+  { id: "s14", en: "She was happy", ru: "Она была счастлива", topic: "yesterday", lvl: 1, tokens: ["She", "was", "happy"], distractor: "is" },
+  { id: "s15", en: "We were at the park", ru: "Мы были в парке", topic: "yesterday", lvl: 2, tokens: ["We", "were", "at", "the", "park"], distractor: "was" },
+  { id: "s16", en: "I played yesterday", ru: "Я играл вчера", topic: "stories", lvl: 1, tokens: ["I", "played", "yesterday"], distractor: "play" },
+  { id: "s17", en: "He walked to school", ru: "Он шёл в школу", topic: "stories", lvl: 1, tokens: ["He", "walked", "to", "school"], distractor: "walks" },
+  { id: "s18", en: "They cooked pizza", ru: "Они приготовили пиццу", topic: "stories", lvl: 2, tokens: ["They", "cooked", "pizza"], distractor: "cook" },
+  { id: "s19", en: "I went to the zoo", ru: "Я ходил в зоопарк", topic: "memories", lvl: 1, tokens: ["I", "went", "to", "the", "zoo"], distractor: "go" },
+  { id: "s20", en: "She saw a bird", ru: "Она увидела птицу", topic: "memories", lvl: 1, tokens: ["She", "saw", "a", "bird"], distractor: "sees" },
+  { id: "s21", en: "We had a cake", ru: "У нас был торт", topic: "memories", lvl: 2, tokens: ["We", "had", "a", "cake"], distractor: "have" },
+  { id: "s22", en: "I am going to swim", ru: "Я собираюсь плавать", topic: "trips", lvl: 2, tokens: ["I", "am", "going", "to", "swim"], distractor: "went" },
+  { id: "s23", en: "It will be sunny", ru: "Будет солнечно", topic: "trips", lvl: 2, tokens: ["It", "will", "be", "sunny"], distractor: "was" },
+  { id: "s24", en: "Where is my bag", ru: "Где моя сумка", topic: "trips", lvl: 3, tokens: ["Where", "is", "my", "bag"], distractor: "Who" },
 ];
 
 export const GAP_TASKS: GapTask[] = [
@@ -103,6 +147,12 @@ export const GAP_TASKS: GapTask[] = [
   { id: "g10", before: "She can't", after: ".", options: ["fly", "flies", "flying"], answer: "fly", hint: "После can't — глагол без окончаний.", topic: "actions", lvl: 2 },
   { id: "g11", before: "", after: "is my friend.", options: ["He", "Him", "His"], answer: "He", hint: "Кто? — He.", topic: "greet", lvl: 3 },
   { id: "g12", before: "My father", after: "to work.", options: ["goes", "go", "going"], answer: "goes", hint: "My father = he → goes.", topic: "family", lvl: 3 },
+  { id: "g13", before: "I", after: "at home yesterday.", options: ["was", "were", "am"], answer: "was", hint: "I / he / she / it → was.", topic: "yesterday", lvl: 1 },
+  { id: "g14", before: "They", after: "at the park.", options: ["was", "were", "is"], answer: "were", hint: "You / we / they → were.", topic: "yesterday", lvl: 1 },
+  { id: "g15", before: "She", after: "a cake.", options: ["cooked", "cooks", "cooking"], answer: "cooked", hint: "Вчера: глагол + -ed.", topic: "stories", lvl: 1 },
+  { id: "g16", before: "Did he", after: "the film?", options: ["see", "saw", "sees"], answer: "see", hint: "После did — глагол без изменений.", topic: "memories", lvl: 2 },
+  { id: "g17", before: "I am", after: "to swim.", options: ["going", "go", "went"], answer: "going", hint: "be going to — план на будущее.", topic: "trips", lvl: 2 },
+  { id: "g18", before: "It", after: "be sunny tomorrow.", options: ["will", "was", "are"], answer: "will", hint: "will + глагол — будущее.", topic: "trips", lvl: 2 },
 ];
 
 export const PLACEMENT: { ru: string; options: string[]; answer: string; wordId: string }[] = [
@@ -123,7 +173,7 @@ export const ACHIEVEMENTS: { id: string; name: string; desc: string }[] = [
   { id: "streak3", name: "Три дня подряд", desc: "Серия из 3 дней" },
   { id: "words25", name: "Живой словарь", desc: "Выучи 25 слов крепко" },
   { id: "boss1", name: "Гроза боссов", desc: "Победи первого босса" },
-  { id: "bossall", name: "Чемпион галактики", desc: "Победи всех 6 боссов" },
+  { id: "bossall", name: "Чемпион галактики", desc: "Победи всех боссов" },
   { id: "voice10", name: "Голос героя", desc: "Произнеси 10 слов в микрофон" },
   { id: "perfect", name: "Без единой ошибки", desc: "Пройди квест на 100%" },
 ];
@@ -134,6 +184,10 @@ export const GRAMMAR_TIPS: { title: string; text: string }[] = [
   { title: "can — умею", text: "После can глагол без окончаний: I can run. She can't fly." },
   { title: "Множественное число", text: "Один cat — два cats. К слову добавляем -s." },
   { title: "like / likes", text: "I/you/we/they → like, he/she/it → likes." },
+  { title: "was / were", text: "I/he/she/it → was. You/we/they → were. Yesterday I was at home." },
+  { title: "Past Simple -ed", text: "Вчера: play → played, walk → walked, cook → cooked." },
+  { title: "did / didn't", text: "Вопрос: Did you see it? Отрицание: I didn't go. После did глагол без -ed." },
+  { title: "going to / will", text: "План: I am going to swim. Будущее: It will be sunny." },
 ];
 
 export const VOLT_PRAISE = ["Мощно! Ты заряжен на 100%!", "Вот это точность!", "Нейроны сверкают! Верно!", "Ты взломал этот код!", "Супер! Даже боссы дрожат!", "Идеальный выстрел!"];

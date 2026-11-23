@@ -1,15 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { ACHIEVEMENTS, WORDS } from "./content";
+import { ACHIEVEMENTS, WORDS, ZONES } from "./content";
 
 describe("word bank", () => {
   it("gives every word a unique id and an emoji", () => {
     const ids = WORDS.map((w) => w.id);
     expect(new Set(ids).size).toBe(WORDS.length);
-    expect(WORDS.length).toBeGreaterThan(50);
+    expect(WORDS.length).toBeGreaterThan(140);
     for (const w of WORDS) {
       expect(w.emoji.trim().length).toBeGreaterThan(0);
       expect(w.en.trim().length).toBeGreaterThan(0);
       expect(w.ru.trim().length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("galaxy map", () => {
+  it("keeps a quest trio on every planet including Spotlight 4.2", () => {
+    expect(ZONES.map((z) => z.id)).toEqual([
+      "greet", "animals", "food", "colors", "family", "actions",
+      "yesterday", "stories", "memories", "trips",
+    ]);
+    for (const z of ZONES) {
+      expect(z.quests).toHaveLength(3);
+      expect(z.quests[2].kind).toBe("boss");
     }
   });
 });

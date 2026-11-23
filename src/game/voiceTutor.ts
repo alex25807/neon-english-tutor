@@ -20,6 +20,11 @@ export const SPEAK_SCRIPT: SpeakPrompt[] = [
   { id: "no", en: "no", ru: "нет", hint: "Откажись вежливо" },
   { id: "nice-to-meet-you", en: "nice to meet you", ru: "приятно познакомиться", hint: "При знакомстве" },
   { id: "good-morning", en: "good morning", ru: "доброе утро", hint: "Утреннее приветствие" },
+  { id: "i-was-at-home", en: "I was at home", ru: "я был дома", hint: "Скажи, где ты был вчера" },
+  { id: "i-was-happy", en: "I was happy", ru: "я был счастлив", hint: "Назови чувство" },
+  { id: "i-played-yesterday", en: "I played yesterday", ru: "я играл вчера", hint: "Past Simple: что делал" },
+  { id: "i-went-to-the-park", en: "I went to the park", ru: "я ходил в парк", hint: "Нерегулярный глагол went" },
+  { id: "i-am-going-to-swim", en: "I am going to swim", ru: "я собираюсь плавать", hint: "План на будущее" },
 ];
 
 export function promptsFromProgress(state: GameState): SpeakPrompt[] {
