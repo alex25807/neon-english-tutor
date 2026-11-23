@@ -1,4 +1,4 @@
-export type TopicId = "greet" | "animals" | "food" | "colors" | "family" | "actions" | "yesterday" | "stories" | "memories" | "trips";
+export type TopicId = "greet" | "animals" | "food" | "colors" | "family" | "actions" | "jobs" | "yesterday" | "stories" | "memories" | "trips";
 
 export interface Word {
   id: string;
