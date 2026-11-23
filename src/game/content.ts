@@ -7,7 +7,7 @@ const W = (topic: TopicId, lvl: 1 | 2 | 3, en: string, ru: string, emoji: string
 
 export const TOPIC_NAMES: Record<TopicId, string> = {
   greet: "Приветствия", animals: "Животные", food: "Еда",
-  colors: "Цвета и числа", family: "Семья и дом", actions: "Действия",
+  colors: "Цвета и числа", family: "Семья и дом", actions: "Действия", jobs: "Профессии",
   yesterday: "Вчера", stories: "Истории", memories: "Воспоминания", trips: "Поездки",
 };
 
@@ -26,6 +26,9 @@ export const WORDS: Word[] = [
   W("animals", 2, "horse", "лошадь", "🐴"), W("animals", 2, "frog", "лягушка", "🐸"),
   W("animals", 2, "fox", "лиса", "🦊"), W("animals", 2, "snake", "змея", "🐍"),
   W("animals", 3, "shark", "акула", "🦈"), W("animals", 3, "dolphin", "дельфин", "🐬"),
+  W("animals", 3, "giraffe", "жираф", "🦒"), W("animals", 3, "hippo", "бегемот", "🦛"),
+  W("animals", 3, "seal", "тюлень", "🦭"), W("animals", 3, "lazy", "ленивый", "🦥"),
+  W("animals", 3, "bigger", "больше", "🔼"),
   W("food", 1, "apple", "яблоко", "🍎"), W("food", 1, "banana", "банан", "🍌"),
   W("food", 1, "milk", "молоко", "🥛"), W("food", 1, "bread", "хлеб", "🍞"),
   W("food", 1, "cheese", "сыр", "🧀"), W("food", 1, "egg", "яйцо", "🥚"),
@@ -34,6 +37,8 @@ export const WORDS: Word[] = [
   W("food", 2, "carrot", "морковь", "🥕"), W("food", 2, "tomato", "помидор", "🍅"),
   W("food", 2, "chicken", "курица", "🍗"), W("food", 2, "water", "вода", "💧"),
   W("food", 3, "cookie", "печенье", "🍪"), W("food", 3, "sandwich", "бутерброд", "🥪"),
+  W("food", 3, "salad", "салат", "🥗"), W("food", 3, "fruit", "фрукты", "🍇"),
+  W("food", 3, "hungry", "голодный", "😋"), W("food", 3, "sugar", "сахар", "🍬"),
   W("colors", 1, "red", "красный", "🔴"), W("colors", 1, "blue", "синий", "🔵"),
   W("colors", 1, "green", "зелёный", "🟢"), W("colors", 1, "yellow", "жёлтый", "🟡"),
   W("colors", 1, "black", "чёрный", "⚫"), W("colors", 1, "white", "белый", "⚪"),
@@ -44,6 +49,8 @@ export const WORDS: Word[] = [
   W("colors", 3, "six", "шесть", "6️⃣"), W("colors", 3, "seven", "семь", "7️⃣"),
   W("colors", 3, "eight", "восемь", "8️⃣"), W("colors", 3, "nine", "девять", "9️⃣"),
   W("colors", 3, "ten", "десять", "🔟"), W("colors", 3, "twenty", "двадцать", "2️⃣0️⃣"),
+  W("colors", 3, "thirty", "тридцать", "3️⃣0️⃣"), W("colors", 3, "fifty", "пятьдесят", "5️⃣0️⃣"),
+  W("colors", 3, "hundred", "сто", "💯"),
   W("family", 1, "mother", "мама", "👩"), W("family", 1, "father", "папа", "👨"),
   W("family", 1, "brother", "брат", "👦"), W("family", 1, "sister", "сестра", "👧"),
   W("family", 1, "grandmother", "бабушка", "👵"), W("family", 1, "grandfather", "дедушка", "👴"),
@@ -52,6 +59,12 @@ export const WORDS: Word[] = [
   W("family", 2, "bed", "кровать", "🛏️"), W("family", 2, "table", "стол", "🪑"),
   W("family", 2, "chair", "стул", "💺"), W("family", 2, "door", "дверь", "🚪"),
   W("family", 3, "window", "окно", "🪟"), W("family", 3, "garden", "сад", "🌳"),
+  W("family", 3, "tall", "высокий", "📏"), W("family", 3, "short", "низкий", "📐"),
+  W("family", 3, "slim", "стройный", "🧍"), W("family", 3, "hair", "волосы", "💇"),
+  W("family", 3, "uncle", "дядя", "👨‍🦱"), W("family", 3, "aunt", "тётя", "👩‍🦰"),
+  W("family", 3, "cousin", "двоюродный брат", "🧑"), W("family", 3, "kind", "добрый", "💛"),
+  W("family", 3, "funny", "весёлый", "😄"), W("family", 3, "keys", "ключи", "🔑"),
+  W("family", 3, "under", "под", "⬇️"),
   W("actions", 1, "run", "бегать", "🏃"), W("actions", 1, "jump", "прыгать", "🤸"),
   W("actions", 1, "swim", "плавать", "🏊"), W("actions", 1, "fly", "летать", "🕊️"),
   W("actions", 1, "read", "читать", "📖"), W("actions", 1, "write", "писать", "✍️"),
@@ -60,6 +73,15 @@ export const WORDS: Word[] = [
   W("actions", 2, "drink", "пить", "🥤"), W("actions", 2, "sleep", "спать", "😴"),
   W("actions", 2, "draw", "рисовать", "🎨"), W("actions", 2, "climb", "карабкаться", "🧗"),
   W("actions", 3, "throw", "бросать", "🤾"), W("actions", 3, "catch", "ловить", "⚾"),
+  W("actions", 3, "ski", "кататься на лыжах", "🎿"), W("actions", 3, "skate", "кататься на коньках", "⛸️"),
+  W("actions", 3, "dive", "нырять", "🤿"), W("actions", 3, "surf", "серфить", "🏄"),
+  W("jobs", 1, "vet", "ветеринар", "🩺"), W("jobs", 1, "baker", "пекарь", "🥖"),
+  W("jobs", 1, "teacher", "учитель", "👩‍🏫"), W("jobs", 1, "doctor", "врач", "👨‍⚕️"),
+  W("jobs", 2, "hospital", "больница", "🏥"), W("jobs", 2, "station", "вокзал", "🚉"),
+  W("jobs", 2, "cafe", "кафе", "☕"), W("jobs", 2, "theatre", "театр", "🎭"),
+  W("jobs", 2, "garage", "гараж", "🚗"), W("jobs", 3, "always", "всегда", "🔁"),
+  W("jobs", 3, "usually", "обычно", "🕐"), W("jobs", 3, "sometimes", "иногда", "⏳"),
+  W("jobs", 3, "clock", "часы", "⏰"), W("jobs", 3, "have to", "нужно", "📌"),
   W("yesterday", 1, "yesterday", "вчера", "📅"), W("yesterday", 1, "happy", "счастливый", "😊"),
   W("yesterday", 1, "sad", "грустный", "😢"), W("yesterday", 1, "tired", "усталый", "😴"),
   W("yesterday", 1, "school", "школа", "🏫"), W("yesterday", 1, "home", "дома", "🏡"),
@@ -95,12 +117,13 @@ export const DICT_EN: Record<string, Word> = Object.fromEntries(WORDS.map((w) =>
 export const DICT_RU: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.ru.toLowerCase(), w]));
 
 export const ZONES: Zone[] = [
-  { id: "greet", title: "Планета Приветствий", subtitle: "Первые слова героя", reqLevel: 1, hue: "#00e5ff", hue2: "#4d7cff", ring: false, quests: [{ id: "greet-1", zone: "greet", title: "Разведка", kind: "lesson", steps: 8 }, { id: "greet-2", zone: "greet", title: "Тайный сигнал", kind: "lesson", steps: 10 }, { id: "greet-3", zone: "greet", title: "Босс: Глитч", kind: "boss", steps: 10 }] },
-  { id: "animals", title: "Остров Зверей", subtitle: "Дикие союзники", reqLevel: 2, hue: "#a3ff12", hue2: "#22c55e", ring: false, quests: [{ id: "animals-1", zone: "animals", title: "Следы на песке", kind: "lesson", steps: 9 }, { id: "animals-2", zone: "animals", title: "Ночной дозор", kind: "lesson", steps: 10 }, { id: "animals-3", zone: "animals", title: "Босс: Краб-Командор", kind: "boss", steps: 11 }] },
-  { id: "food", title: "Лагуна Вкусняшек", subtitle: "Энергия для героя", reqLevel: 3, hue: "#ffd60a", hue2: "#ff9f0a", ring: true, quests: [{ id: "food-1", zone: "food", title: "Пикник разведчика", kind: "lesson", steps: 9 }, { id: "food-2", zone: "food", title: "Кухня капитана", kind: "lesson", steps: 10 }, { id: "food-3", zone: "food", title: "Босс: Желейный Титан", kind: "boss", steps: 11 }] },
-  { id: "colors", title: "Город Цвета и Чисел", subtitle: "Код неоновых огней", reqLevel: 4, hue: "#ff2ec4", hue2: "#ff5470", ring: true, quests: [{ id: "colors-1", zone: "colors", title: "Огни города", kind: "lesson", steps: 9 }, { id: "colors-2", zone: "colors", title: "Шифр чисел", kind: "lesson", steps: 10 }, { id: "colors-3", zone: "colors", title: "Босс: Пиксель-Фантом", kind: "boss", steps: 12 }] },
-  { id: "family", title: "Замок Семьи", subtitle: "Команда героя", reqLevel: 5, hue: "#8b5cf6", hue2: "#c084fc", ring: false, quests: [{ id: "family-1", zone: "family", title: "Жители замка", kind: "lesson", steps: 9 }, { id: "family-2", zone: "family", title: "Карта комнат", kind: "lesson", steps: 10 }, { id: "family-3", zone: "family", title: "Босс: Теневой Рыцарь", kind: "boss", steps: 12 }] },
-  { id: "actions", title: "Арена Действий", subtitle: "Суперспособности", reqLevel: 6, hue: "#00e5ff", hue2: "#ff2ec4", ring: true, quests: [{ id: "actions-1", zone: "actions", title: "Тренировка героев", kind: "lesson", steps: 9 }, { id: "actions-2", zone: "actions", title: "Полоса препятствий", kind: "lesson", steps: 10 }, { id: "actions-3", zone: "actions", title: "Босс: Нео-Дракон", kind: "boss", steps: 12 }] },
+  { id: "greet", title: "Планета Приветствий", subtitle: "Снова вместе", reqLevel: 1, hue: "#00e5ff", hue2: "#4d7cff", ring: false, quests: [{ id: "greet-1", zone: "greet", title: "Разведка", kind: "lesson", steps: 8 }, { id: "greet-2", zone: "greet", title: "Тайный сигнал", kind: "lesson", steps: 10 }, { id: "greet-3", zone: "greet", title: "Босс: Глитч", kind: "boss", steps: 10 }] },
+  { id: "animals", title: "Остров Зверей", subtitle: "В зоопарке", reqLevel: 2, hue: "#a3ff12", hue2: "#22c55e", ring: false, quests: [{ id: "animals-1", zone: "animals", title: "Следы на песке", kind: "lesson", steps: 9 }, { id: "animals-2", zone: "animals", title: "Ночной дозор", kind: "lesson", steps: 10 }, { id: "animals-3", zone: "animals", title: "Босс: Краб-Командор", kind: "boss", steps: 11 }] },
+  { id: "food", title: "Лагуна Вкусняшек", subtitle: "Вкусные угощения", reqLevel: 3, hue: "#ffd60a", hue2: "#ff9f0a", ring: true, quests: [{ id: "food-1", zone: "food", title: "Пикник разведчика", kind: "lesson", steps: 9 }, { id: "food-2", zone: "food", title: "Кухня капитана", kind: "lesson", steps: 10 }, { id: "food-3", zone: "food", title: "Босс: Желейный Титан", kind: "boss", steps: 11 }] },
+  { id: "colors", title: "Город Цвета и Чисел", subtitle: "Числа до ста", reqLevel: 4, hue: "#ff2ec4", hue2: "#ff5470", ring: true, quests: [{ id: "colors-1", zone: "colors", title: "Огни города", kind: "lesson", steps: 9 }, { id: "colors-2", zone: "colors", title: "Шифр чисел", kind: "lesson", steps: 10 }, { id: "colors-3", zone: "colors", title: "Босс: Пиксель-Фантом", kind: "boss", steps: 12 }] },
+  { id: "family", title: "Замок Семьи", subtitle: "Семья и друзья", reqLevel: 5, hue: "#8b5cf6", hue2: "#c084fc", ring: false, quests: [{ id: "family-1", zone: "family", title: "Жители замка", kind: "lesson", steps: 9 }, { id: "family-2", zone: "family", title: "Карта комнат", kind: "lesson", steps: 10 }, { id: "family-3", zone: "family", title: "Босс: Теневой Рыцарь", kind: "boss", steps: 12 }] },
+  { id: "actions", title: "Арена Действий", subtitle: "Что ты делаешь сейчас?", reqLevel: 6, hue: "#00e5ff", hue2: "#ff2ec4", ring: true, quests: [{ id: "actions-1", zone: "actions", title: "Тренировка героев", kind: "lesson", steps: 9 }, { id: "actions-2", zone: "actions", title: "Полоса препятствий", kind: "lesson", steps: 10 }, { id: "actions-3", zone: "actions", title: "Босс: Нео-Дракон", kind: "boss", steps: 12 }] },
+  { id: "jobs", title: "Станция Смен", subtitle: "Рабочий день", reqLevel: 6, hue: "#fbbf24", hue2: "#ea580c", ring: false, quests: [{ id: "jobs-1", zone: "jobs", title: "Смена на станции", kind: "lesson", steps: 9 }, { id: "jobs-2", zone: "jobs", title: "Расписание дня", kind: "lesson", steps: 10 }, { id: "jobs-3", zone: "jobs", title: "Босс: Часовой Капитан", kind: "boss", steps: 12 }] },
   { id: "yesterday", title: "Планета Вчера", subtitle: "Где ты был вчера?", reqLevel: 7, hue: "#c084fc", hue2: "#7c3aed", ring: false, quests: [{ id: "yesterday-1", zone: "yesterday", title: "Следы в календаре", kind: "lesson", steps: 9 }, { id: "yesterday-2", zone: "yesterday", title: "Карта чувств", kind: "lesson", steps: 10 }, { id: "yesterday-3", zone: "yesterday", title: "Босс: Хроно-Глитч", kind: "boss", steps: 12 }] },
   { id: "stories", title: "Лес Сказок", subtitle: "Что случилось ночью", reqLevel: 8, hue: "#38bdf8", hue2: "#0369a1", ring: true, quests: [{ id: "stories-1", zone: "stories", title: "След на тропе", kind: "lesson", steps: 9 }, { id: "stories-2", zone: "stories", title: "Конец главы", kind: "lesson", steps: 10 }, { id: "stories-3", zone: "stories", title: "Босс: Сонный Сфинкс", kind: "boss", steps: 12 }] },
   { id: "memories", title: "Остров Воспоминаний", subtitle: "Лучший день года", reqLevel: 9, hue: "#f472b6", hue2: "#db2777", ring: false, quests: [{ id: "memories-1", zone: "memories", title: "Яркий кадр", kind: "lesson", steps: 9 }, { id: "memories-2", zone: "memories", title: "Самый-самый", kind: "lesson", steps: 10 }, { id: "memories-3", zone: "memories", title: "Босс: Архив-Титан", kind: "boss", steps: 12 }] },
@@ -132,6 +155,14 @@ export const SENTENCES: Sentence[] = [
   { id: "s22", en: "I am going to swim", ru: "Я собираюсь плавать", topic: "trips", lvl: 2, tokens: ["I", "am", "going", "to", "swim"], distractor: "went" },
   { id: "s23", en: "It will be sunny", ru: "Будет солнечно", topic: "trips", lvl: 2, tokens: ["It", "will", "be", "sunny"], distractor: "was" },
   { id: "s24", en: "Where is my bag", ru: "Где моя сумка", topic: "trips", lvl: 3, tokens: ["Where", "is", "my", "bag"], distractor: "Who" },
+  { id: "s25", en: "He is tall and slim", ru: "Он высокий и стройный", topic: "family", lvl: 2, tokens: ["He", "is", "tall", "and", "slim"], distractor: "were" },
+  { id: "s26", en: "She has got dark hair", ru: "У неё тёмные волосы", topic: "family", lvl: 2, tokens: ["She", "has", "got", "dark", "hair"], distractor: "have" },
+  { id: "s27", en: "The keys are under the table", ru: "Ключи под столом", topic: "family", lvl: 3, tokens: ["The", "keys", "are", "under", "the", "table"], distractor: "was" },
+  { id: "s28", en: "He is a vet", ru: "Он ветеринар", topic: "jobs", lvl: 1, tokens: ["He", "is", "a", "vet"], distractor: "were" },
+  { id: "s29", en: "I always go to school", ru: "Я всегда хожу в школу", topic: "jobs", lvl: 2, tokens: ["I", "always", "go", "to", "school"], distractor: "went" },
+  { id: "s30", en: "I would like a salad", ru: "Я хотел бы салат", topic: "food", lvl: 3, tokens: ["I", "would", "like", "a", "salad"], distractor: "went" },
+  { id: "s31", en: "The giraffe is bigger", ru: "Жираф больше", topic: "animals", lvl: 3, tokens: ["The", "giraffe", "is", "bigger"], distractor: "biggest" },
+  { id: "s32", en: "She is skating now", ru: "Она сейчас катается", topic: "actions", lvl: 3, tokens: ["She", "is", "skating", "now"], distractor: "skated" },
 ];
 
 export const GAP_TASKS: GapTask[] = [
@@ -153,6 +184,12 @@ export const GAP_TASKS: GapTask[] = [
   { id: "g16", before: "Did he", after: "the film?", options: ["see", "saw", "sees"], answer: "see", hint: "После did — глагол без изменений.", topic: "memories", lvl: 2 },
   { id: "g17", before: "I am", after: "to swim.", options: ["going", "go", "went"], answer: "going", hint: "be going to — план на будущее.", topic: "trips", lvl: 2 },
   { id: "g18", before: "It", after: "be sunny tomorrow.", options: ["will", "was", "are"], answer: "will", hint: "will + глагол — будущее.", topic: "trips", lvl: 2 },
+  { id: "g19", before: "He", after: "got fair hair.", options: ["has", "have", "is"], answer: "has", hint: "He / She → has got.", topic: "family", lvl: 2 },
+  { id: "g20", before: "She is", after: "now.", options: ["skating", "skate", "skated"], answer: "skating", hint: "Сейчас: am/is/are + -ing.", topic: "actions", lvl: 3 },
+  { id: "g21", before: "The bag is", after: "the table.", options: ["under", "who", "will"], answer: "under", hint: "Место: in / on / under.", topic: "family", lvl: 2 },
+  { id: "g22", before: "There are", after: "apples.", options: ["some", "any", "went"], answer: "some", hint: "В утверждениях — some.", topic: "food", lvl: 3 },
+  { id: "g23", before: "A giraffe is", after: "than a cat.", options: ["bigger", "biggest", "big"], answer: "bigger", hint: "Сравнение двух: -er + than.", topic: "animals", lvl: 3 },
+  { id: "g24", before: "I", after: "to help.", options: ["have", "has", "is"], answer: "have", hint: "I / you / we / they → have to.", topic: "jobs", lvl: 2 },
 ];
 
 export const PLACEMENT: { ru: string; options: string[]; answer: string; wordId: string }[] = [
@@ -188,6 +225,12 @@ export const GRAMMAR_TIPS: { title: string; text: string }[] = [
   { title: "Past Simple -ed", text: "Вчера: play → played, walk → walked, cook → cooked." },
   { title: "did / didn't", text: "Вопрос: Did you see it? Отрицание: I didn't go. После did глагол без -ed." },
   { title: "going to / will", text: "План: I am going to swim. Будущее: It will be sunny." },
+  { title: "have got", text: "I/you/we/they → have got. He/she/it → has got. She has got dark hair." },
+  { title: "Present Continuous", text: "Сейчас: am/is/are + глагол с -ing. She is skating now." },
+  { title: "in / on / under", text: "in — в, on — на, under — под. The keys are under the table." },
+  { title: "some / any", text: "There are some apples. В вопросах и отрицаниях чаще any." },
+  { title: "сравнение -er", text: "Два предмета: bigger / taller + than. A giraffe is bigger than a cat." },
+  { title: "have to", text: "Обязанность: I have to help. He has to get up." },
 ];
 
 export const VOLT_PRAISE = ["Мощно! Ты заряжен на 100%!", "Вот это точность!", "Нейроны сверкают! Верно!", "Ты взломал этот код!", "Супер! Даже боссы дрожат!", "Идеальный выстрел!"];

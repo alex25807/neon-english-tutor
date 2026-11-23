@@ -40,7 +40,7 @@ export default function Onboarding({ onComplete, state, onPatch }: { onComplete:
               <div className="anim-bobble shrink-0"><VoltRobot mood="cool" className="w-20 h-20" /></div>
               <div><h1 className="font-display text-3xl leading-none"><span className="text-neon neon-cyan">NEON</span> <span className="text-pinky neon-pink">ENGLISH</span></h1><p className="text-white/70 font-bold text-sm mt-1">Квест-репетитор английского языка</p></div>
             </div>
-            <p className="text-white/80 font-semibold text-sm leading-relaxed mt-4">Привет! Я <span className="text-neon font-extrabold">Вольт</span> — твой робот-наставник. Мы пролетим шесть планет, победим боссов и выучим английский. Поехали!</p>
+            <p className="text-white/80 font-semibold text-sm leading-relaxed mt-4">Привет! Я <span className="text-neon font-extrabold">Вольт</span> — твой робот-наставник. Мы пролетим галактику, победим боссов и выучим английский. Поехали!</p>
             <label className="block mt-6 text-xs font-display uppercase tracking-widest text-white/60">Как тебя зовут, герой?</label>
             <input value={name} onChange={(e) => { setName(e.target.value); setNameError(false); }} maxLength={16} placeholder="Впиши своё имя" className={`mt-2 w-full bg-panel border-2 rounded-xl px-4 py-3 font-extrabold text-white placeholder:text-white/30 outline-none transition-colors ${nameError ? "border-hot anim-shake" : "border-edge focus:border-neon"}`} />
             <label className="block mt-5 text-xs font-display uppercase tracking-widest text-white/60">Выбери аватар</label>
