@@ -19,7 +19,24 @@ export function defaultState(): GameState {
     perfects: 0,
     chat: [],
     settings: { voiceOn: true, voltTalks: true, rate: 0.85, voiceGender: "default" },
+    boosts: { extraHearts: 0 },
     createdAt: Date.now(),
+  };
+}
+
+export function hydrateState(parsed: Partial<GameState>): GameState {
+  const base = defaultState();
+  return {
+    ...base,
+    ...parsed,
+    streak: { ...base.streak, ...(parsed.streak ?? {}) },
+    settings: { ...base.settings, ...(parsed.settings ?? {}) },
+    boosts: { ...base.boosts, ...(parsed.boosts ?? {}) },
+    cards: parsed.cards ?? base.cards,
+    quests: parsed.quests ?? base.quests,
+    mistakes: parsed.mistakes ?? base.mistakes,
+    chat: Array.isArray(parsed.chat) ? parsed.chat : base.chat,
+    achievements: Array.isArray(parsed.achievements) ? parsed.achievements : base.achievements,
   };
 }
 
@@ -27,10 +44,23 @@ export function loadState(): GameState {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return defaultState();
-    const parsed = JSON.parse(raw) as Partial<GameState>;
-    const base = defaultState();
-    return { ...base, ...parsed, streak: { ...base.streak, ...(parsed.streak ?? {}) }, settings: { ...base.settings, ...(parsed.settings ?? {}) } };
+    return hydrateState(JSON.parse(raw) as Partial<GameState>);
   } catch { return defaultState(); }
+}
+
+export function parseImportedState(raw: string): GameState | null {
+  try {
+    const parsed = JSON.parse(raw) as Partial<GameState>;
+    if (!parsed || typeof parsed !== "object" || parsed.v !== 1) return null;
+    if (parsed.profile != null && (typeof parsed.profile !== "object" || typeof parsed.profile.name !== "string")) return null;
+    return hydrateState(parsed);
+  } catch {
+    return null;
+  }
+}
+
+export function exportState(s: GameState): string {
+  return JSON.stringify(s);
 }
 
 export function saveState(s: GameState): void {

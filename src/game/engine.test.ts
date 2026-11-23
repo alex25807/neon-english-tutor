@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { ZONES } from "./content";
 import {
   applyQuestFinish,
+  buyExtraHeart,
   emptyCard,
+  EXTRA_HEART_COST,
+  questStartHearts,
   levelInfo,
   matchStepResults,
   updCard,
@@ -19,6 +22,7 @@ const word = (id: string, en = id, ru = id): Word => ({
   ru,
   topic: "animals",
   lvl: 1,
+  emoji: "✨",
 });
 
 const payload = (over: Partial<FinishPayload> = {}): FinishPayload => ({
@@ -151,5 +155,35 @@ describe("applyQuestFinish", () => {
     expect(state.bossesDown).toBe(1);
     expect(state.achievements).toContain("first");
     expect(effects.newAchievements).toContain("first");
+  });
+});
+
+describe("buyExtraHeart", () => {
+  it("spends volts and stocks a heart", () => {
+    const prev = { ...defaultState(), coins: EXTRA_HEART_COST };
+    const next = buyExtraHeart(prev);
+    expect(next).not.toBeNull();
+    expect(next!.coins).toBe(0);
+    expect(next!.boosts.extraHearts).toBe(1);
+    expect(prev.coins).toBe(EXTRA_HEART_COST);
+  });
+
+  it("stacks a second heart", () => {
+    const first = buyExtraHeart({ ...defaultState(), coins: EXTRA_HEART_COST * 2 })!;
+    const second = buyExtraHeart(first)!;
+    expect(second.coins).toBe(0);
+    expect(second.boosts.extraHearts).toBe(2);
+  });
+
+  it("refuses when there are not enough volts", () => {
+    expect(buyExtraHeart({ ...defaultState(), coins: EXTRA_HEART_COST - 1 })).toBeNull();
+  });
+});
+
+describe("questStartHearts", () => {
+  it("adds a bonus heart only on the first attempt", () => {
+    expect(questStartHearts(1)).toBe(4);
+    expect(questStartHearts(1, true)).toBe(3);
+    expect(questStartHearts(0)).toBe(3);
   });
 });

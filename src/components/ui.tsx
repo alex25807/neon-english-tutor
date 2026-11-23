@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import type { Toast } from "../game/types";
 import { IconBolt, IconSparkle, IconStar, IconTrophy, IconX } from "./icons";
 
@@ -32,15 +32,23 @@ export function StarRow({ n, size = "w-10 h-10", animate }: { n: number; size?: 
 }
 
 export function Modal({ open, onClose, children, wide }: { open: boolean; onClose: () => void; children: ReactNode; wide?: boolean }) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
   if (!open) return null;
-  return (<div className="fixed inset-0 z-50 flex items-center justify-center p-4"><div className="absolute inset-0 bg-[#05020f]/80 backdrop-blur-sm" onClick={onClose} /><div className={`anim-pop relative w-full ${wide ? "max-w-2xl" : "max-w-md"} bg-deep border-2 border-edge rounded-2xl shadow-[0_0_40px_rgba(139,92,246,0.35)] p-6 max-h-[86vh] overflow-y-auto`}><button onClick={onClose} className="absolute top-3 right-3 w-9 h-9 rounded-lg bg-panel2 border-2 border-edge text-white/60 hover:text-hot hover:border-hot/60 flex items-center justify-center btn-arcade" aria-label="Закрыть"><IconX className="w-4 h-4" /></button>{children}</div></div>);
+  return (<div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true"><div className="absolute inset-0 bg-[#05020f]/80 backdrop-blur-sm" onClick={onClose} /><div className={`anim-pop relative w-full ${wide ? "max-w-2xl" : "max-w-md"} bg-deep border-2 border-edge rounded-2xl shadow-[0_0_40px_rgba(139,92,246,0.35)] p-6 max-h-[86vh] overflow-y-auto`}><button onClick={onClose} className="absolute top-3 right-3 w-9 h-9 rounded-lg bg-panel2 border-2 border-edge text-white/60 hover:text-hot hover:border-hot/60 flex items-center justify-center btn-arcade" aria-label="Закрыть"><IconX className="w-4 h-4" /></button>{children}</div></div>);
 }
 
 const CONFETTI_COLORS = ["#00e5ff", "#ff2ec4", "#a3ff12", "#ffd60a", "#8b5cf6", "#ffffff"];
 
 export function Confetti({ count = 40 }: { count?: number }) {
+  const reduce = useMemo(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
   const pieces = useMemo(() => Array.from({ length: count }, (_, i) => ({ id: i, left: Math.random() * 100, delay: Math.random() * 0.8, dur: 2.4 + Math.random() * 2, size: 6 + Math.random() * 8, color: CONFETTI_COLORS[i % CONFETTI_COLORS.length], round: Math.random() > 0.5 })), [count]);
-  return (<div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">{pieces.map((p) => (<span key={p.id} className="absolute top-0" style={{ left: `${p.left}%`, width: p.size, height: p.size * (p.round ? 1 : 0.45), background: p.color, borderRadius: p.round ? "50%" : "2px", boxShadow: `0 0 8px ${p.color}`, animation: `confettiFall ${p.dur}s ${p.delay}s linear forwards` }} />))}</div>);
+  if (reduce) return null;
+  return (<div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">{pieces.map((p) => (<span key={p.id} className="anim-confetti absolute top-0" style={{ left: `${p.left}%`, width: p.size, height: p.size * (p.round ? 1 : 0.45), background: p.color, borderRadius: p.round ? "50%" : "2px", boxShadow: `0 0 8px ${p.color}`, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s` }} />))}</div>);
 }
 
 export function ToastHost({ toasts }: { toasts: Toast[] }) {

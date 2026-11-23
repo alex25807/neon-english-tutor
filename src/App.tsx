@@ -8,9 +8,10 @@ import QuestPlayer from "./components/QuestPlayer";
 import SettingsModal from "./components/SettingsModal";
 import { Confetti, Modal, NeonButton, ToastHost } from "./components/ui";
 import { ACHIEVEMENTS, ZONES } from "./game/content";
-import { applyQuestFinish, checkAchievements, dueWords, xpToReachLevel } from "./game/engine";
+import { applyQuestFinish, buyExtraHeart, checkAchievements, dueWords, EXTRA_HEART_COST, xpToReachLevel } from "./game/engine";
+import { parseHash, writeHash } from "./game/hash";
 import { stopSpeaking } from "./game/speech";
-import { defaultState, loadState, saveState, todayStr } from "./game/storage";
+import { defaultState, exportState, loadState, parseImportedState, saveState, todayStr } from "./game/storage";
 import type { ChatMsg, FinishPayload, GameState, QuestDef, Settings, Toast, Zone } from "./game/types";
 
 function SpaceBg() {
@@ -22,14 +23,32 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("map");
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [active, setActive] = useState<{ zone: Zone; quest: QuestDef | null } | null>(null);
+  const [active, setActive] = useState<{ zone: Zone; quest: QuestDef | null; bonusHearts: number } | null>(null);
   const [levelUpFx, setLevelUpFx] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [exitConfirm, setExitConfirm] = useState(false);
   const toastId = useRef(0);
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   useEffect(() => { saveState(state); }, [state]);
   useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => {
+    const initial = parseHash(window.location.hash);
+    if (initial === "play" || !window.location.hash) writeHash("map", "replace");
+    else setTab(initial);
+    const onHash = () => {
+      const view = parseHash(window.location.hash);
+      if (view === "play") {
+        if (!activeRef.current) writeHash("map", "replace");
+        return;
+      }
+      setActive(null);
+      setTab(view);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   const pushToast = (t: Omit<Toast, "id">) => { const id = ++toastId.current; setToasts((ts) => [...ts.slice(-2), { ...t, id }]); window.setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 4000); };
 
@@ -62,8 +81,49 @@ export default function App() {
     }
   };
 
-  const doReset = () => { setState(defaultState()); setResetConfirm(false); setExitConfirm(false); };
+  const doReset = () => { setState(defaultState()); setResetConfirm(false); setExitConfirm(false); writeHash("map", "replace"); setTab("map"); setActive(null); };
   const dueCount = dueWords(state).length;
+
+  const goTab = (t: Tab) => { setTab(t); writeHash(t); };
+  const startQuest = (zone: Zone, quest: QuestDef | null) => {
+    stopSpeaking();
+    const bonusHearts = (state.boosts.extraHearts ?? 0) > 0 ? 1 : 0;
+    if (bonusHearts) setState((s) => ({ ...s, boosts: { extraHearts: Math.max(0, (s.boosts.extraHearts ?? 0) - 1) } }));
+    const next = { zone, quest, bonusHearts };
+    activeRef.current = next;
+    setActive(next);
+    writeHash("play");
+  };
+  const leaveQuest = () => {
+    activeRef.current = null;
+    setActive(null);
+    writeHash(tab === "map" || tab === "chat" || tab === "progress" ? tab : "map", "replace");
+  };
+  const downloadProgress = () => {
+    const blob = new Blob([exportState(state)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `neon-english-${state.profile?.name ?? "hero"}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const importProgress = (raw: string) => {
+    const next = parseImportedState(raw);
+    if (!next) return false;
+    setState(next);
+    pushToast({ title: "Прогресс загружен", tone: "lime" });
+    return true;
+  };
+  const buyHeart = () => {
+    const next = buyExtraHeart(state);
+    if (!next) {
+      pushToast({ title: "Мало вольтов", desc: `Нужно ${EXTRA_HEART_COST}`, tone: "pink" });
+      return;
+    }
+    setState(next);
+    pushToast({ title: "Сердце в запасе!", desc: "Сработает в следующем квесте", tone: "gold" });
+  };
 
   if (!state.profile) return (<><SpaceBg /><Onboarding onComplete={handleOnboarding} state={state} onPatch={(p: Partial<Settings>) => setState((s: GameState) => ({ ...s, settings: { ...s.settings, ...p } }))} /></>);
 
@@ -74,17 +134,17 @@ export default function App() {
       <ToastHost toasts={toasts} />
       {!active ? (
         <>
-          <Hud state={state} tab={tab} onTab={setTab} onSettings={() => setSettingsOpen(true)} onExit={() => setExitConfirm(true)} dueCount={dueCount} />
+          <Hud state={state} tab={tab} onTab={goTab} onSettings={() => setSettingsOpen(true)} onExit={() => setExitConfirm(true)} dueCount={dueCount} />
           <main className="relative z-10">
-            {tab === "map" && <QuestMap state={state} onStart={(zone: Zone, quest: QuestDef) => { stopSpeaking(); setActive({ zone, quest }); }} onReview={() => { stopSpeaking(); setActive({ zone: ZONES[0], quest: null }); }} onLocked={(msg: string) => pushToast({ title: "Заперто!", desc: msg, tone: "pink" })} />}
+            {tab === "map" && <QuestMap state={state} onStart={(zone: Zone, quest: QuestDef) => startQuest(zone, quest)} onReview={() => startQuest(ZONES[0], null)} onLocked={(msg: string) => pushToast({ title: "Заперто!", desc: msg, tone: "pink" })} />}
             {tab === "chat" && <ChatPanel state={state} onAppend={(msgs: ChatMsg[]) => setState((s: GameState) => ({ ...s, chat: [...s.chat, ...msgs].slice(-120) }))} onToast={pushToast} />}
-            {tab === "progress" && <ProgressTab state={state} />}
+            {tab === "progress" && <ProgressTab state={state} onBuyHeart={buyHeart} />}
           </main>
         </>
       ) : (
-        <QuestPlayer zone={active.zone} quest={active.quest} state={state} onFinish={finishQuest} onExit={() => setActive(null)} onToast={pushToast} />
+        <QuestPlayer zone={active.zone} quest={active.quest} state={state} bonusHearts={active.bonusHearts} onFinish={finishQuest} onExit={leaveQuest} onToast={pushToast} />
       )}
-      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} state={state} onPatch={(p: Partial<Settings>) => setState((s: GameState) => ({ ...s, settings: { ...s.settings, ...p } }))} onReset={() => { setSettingsOpen(false); setResetConfirm(true); }} />
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} state={state} onPatch={(p: Partial<Settings>) => setState((s: GameState) => ({ ...s, settings: { ...s.settings, ...p } }))} onReset={() => { setSettingsOpen(false); setResetConfirm(true); }} onExport={downloadProgress} onImport={importProgress} />
       <Modal open={resetConfirm} onClose={() => setResetConfirm(false)}>
         <h3 className="font-display text-lg text-hot uppercase">Сбросить прогресс?</h3>
         <p className="text-white/70 font-bold text-sm mt-2">Это действие нельзя отменить!</p>
@@ -94,9 +154,9 @@ export default function App() {
         <div className="text-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-neon to-pinky flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.5)]"><span className="font-display text-2xl text-white">👋</span></div>
           <h3 className="font-display text-xl text-neon neon-cyan uppercase mt-4">До встречи, герой!</h3>
-          <p className="text-white/70 font-bold text-sm mt-3">{state.profile?.name}, весь прогресс сохранён!</p>
-          <p className="text-white/50 font-bold text-xs mt-3">Чтобы выйти, закройте вкладку браузера вручную (Ctrl+W)</p>
-          <div className="flex gap-3 mt-6"><NeonButton tone="dark" className="flex-1" onClick={() => setExitConfirm(false)}>Остаться и играть</NeonButton><NeonButton tone="pink" className="flex-1" onClick={() => setExitConfirm(false)}>Закрыть</NeonButton></div>
+          <p className="text-white/70 font-bold text-sm mt-3">{state.profile?.name}, весь прогресс сохранён в этом браузере.</p>
+          <p className="text-white/50 font-bold text-xs mt-3">Вкладку можно закрыть — или скачать копию прогресса в настройках.</p>
+          <div className="mt-6"><NeonButton tone="cyan" className="w-full" onClick={() => setExitConfirm(false)}>Продолжить игру</NeonButton></div>
         </div>
       </Modal>
     </div>

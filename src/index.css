@@ -302,3 +302,35 @@ body {
 .anim-antenna {
   animation: antennaGlow 2s ease-in-out infinite;
 }
+.anim-confetti {
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars,
+  .stars2,
+  .grid-floor,
+  .anim-floaty,
+  .anim-bobble,
+  .anim-pop,
+  .anim-shake,
+  .anim-rise,
+  .anim-pulse-glow,
+  .anim-zap,
+  .anim-slide-up,
+  .anim-toast,
+  .anim-antenna,
+  .anim-confetti {
+    animation: none !important;
+  }
+  .btn-arcade {
+    transition: none;
+    will-change: auto;
+  }
+  .btn-arcade:hover,
+  .btn-arcade:active {
+    transform: none;
+  }
+}
