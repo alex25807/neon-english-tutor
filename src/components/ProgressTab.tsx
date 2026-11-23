@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ACHIEVEMENTS, WORDS } from "../game/content";
+import { ACHIEVEMENTS, WORDS, ZONES } from "../game/content";
 import { bossesDownCount, EXTRA_HEART_COST, levelInfo, masteredCount, questDoneCount, starsCount } from "../game/engine";
 import { speak } from "../game/speech";
 import type { GameState } from "../game/types";
@@ -31,7 +31,7 @@ export default function ProgressTab({ state, onBuyHeart }: { state: GameState; o
         <h3 className="font-display text-lg text-pinky neon-pink uppercase">Квесты и боссы</h3>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div className="bg-panel border-2 border-edge rounded-xl p-4"><div className="font-display text-2xl text-goldy">{quests}</div><div className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 mt-1">Квестов пройдено</div></div>
-          <div className="bg-panel border-2 border-edge rounded-xl p-4"><div className="font-display text-2xl text-pinky">{bosses}/6</div><div className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 mt-1">Боссов побеждено</div></div>
+          <div className="bg-panel border-2 border-edge rounded-xl p-4"><div className="font-display text-2xl text-pinky">{bosses}/{ZONES.length}</div><div className="text-[10px] font-extrabold uppercase tracking-widest text-white/40 mt-1">Боссов побеждено</div></div>
         </div>
       </div>
       <div className="bg-deep/90 border-2 border-goldy/40 rounded-3xl p-6">

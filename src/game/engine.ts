@@ -182,7 +182,7 @@ export function checkAchievements(state: GameState): string[] {
   if (done >= 1) add("first"); if (done >= 3) add("trio"); if (done >= 10) add("ten");
   if (levelInfo(state.xp).level >= 3) add("lvl3"); if (levelInfo(state.xp).level >= 5) add("lvl5");
   if (state.streak.count >= 3) add("streak3"); if (masteredCount(state) >= 25) add("words25");
-  if (bossesDownCount(state) >= 1) add("boss1"); if (bossesDownCount(state) >= 6) add("bossall");
+  if (bossesDownCount(state) >= 1) add("boss1"); if (bossesDownCount(state) >= ZONES.length) add("bossall");
   if (state.speakDone >= 10) add("voice10"); if (state.perfects >= 1) add("perfect");
   return fresh;
 }
