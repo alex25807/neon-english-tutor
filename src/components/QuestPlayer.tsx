@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { VOLT_INTRO_LINES, VOLT_OOPS, VOLT_PRAISE } from "../game/content";
 import { buildQuestRun, buildReviewRun, matchStepResults, questStartHearts, shuffle } from "../game/engine";
-import { speak, speechMatches, startListening, sttSupported, stopSpeaking, ttsSupported } from "../game/speech";
+import { pickBestHeard, speak, speechMatches, startListening, sttSupported, stopSpeaking, ttsSupported } from "../game/speech";
 import type { Exercise, FinishPayload, GameState, QuestDef, RunStats, Sentence, Settings, Toast, Word, Zone } from "../game/types";
 import { IconArrowRight, IconBoss, IconCheck, IconHeart, IconMic, IconRefresh, IconSpeaker, IconX, VoltRobot } from "./icons";
 import { Bar, Confetti, Modal, NeonButton, StarRow } from "./ui";
@@ -213,7 +213,7 @@ function SpeakerTask({ word, rate, gender, onResult, onToast }: { word: Word; ra
   const finish = (ok: boolean, heard: string) => { if (finished.current) return; finished.current = true; onResult(ok, heard); };
   const toggleMic = () => {
     if (listening) { recRef.current?.stop(); setListening(false); return; }
-    const rec = startListening({ lang: "en-US", onInterim: setInterim, onFinal: (text) => { setInterim(text); setListening(false); finish(speechMatches(word.en, text), text); }, onEnd: () => setListening(false), onError: (err) => { setListening(false); if (err === "not-allowed" || err === "service-not-allowed") onToast({ title: "Нет доступа к микрофону", desc: "Напиши слово вручную", tone: "pink" }); else if (err !== "aborted" && err !== "no-speech") onToast({ title: "Микрофон не отвечает", desc: "Напиши слово вручную", tone: "pink" }); } });
+    const rec = startListening({ lang: "en-US", onInterim: setInterim, onFinal: (text, alts) => { setInterim(text); setListening(false); const best = pickBestHeard(word.en, text, alts ?? []); finish(speechMatches(word.en, best), best); }, onEnd: () => setListening(false), onError: (err) => { setListening(false); if (err === "not-allowed" || err === "service-not-allowed") onToast({ title: "Нет доступа к микрофону", desc: "Напиши слово вручную", tone: "pink" }); else if (err !== "aborted" && err !== "no-speech") onToast({ title: "Микрофон не отвечает", desc: "Напиши слово вручную", tone: "pink" }); } });
     if (!rec) { onToast({ title: "Браузер не умеет слушать", desc: "Напиши слово вручную", tone: "pink" }); return; }
     recRef.current = rec; setListening(true); setInterim("");
   };

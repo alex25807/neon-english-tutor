@@ -96,7 +96,7 @@ type SR = {
   start: () => void;
   stop: () => void;
   abort: () => void;
-  onresult: ((e: { resultIndex: number; results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> }) => void) | null;
+  onresult: ((e: { resultIndex: number; results: ArrayLike<{ isFinal: boolean; length: number; [index: number]: { transcript: string } }> }) => void) | null;
   onend: (() => void) | null;
   onerror: ((e: { error?: string }) => void) | null;
 };
@@ -111,7 +111,7 @@ export const sttSupported = !!getSR();
 
 export function startListening(opts: {
   lang: "en-US" | "ru-RU";
-  onFinal: (text: string) => void;
+  onFinal: (text: string, alternatives?: string[]) => void;
   onInterim?: (text: string) => void;
   onEnd: () => void;
   onError?: (err: string) => void;
@@ -128,8 +128,11 @@ export function startListening(opts: {
     let interim = "";
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const r = e.results[i];
-      if (r.isFinal) opts.onFinal(r[0].transcript);
-      else interim += r[0].transcript;
+      if (r.isFinal) {
+        const alts: string[] = [];
+        for (let a = 0; a < r.length; a++) alts.push(r[a].transcript);
+        opts.onFinal(r[0].transcript, alts);
+      } else interim += r[0].transcript;
     }
     if (interim && opts.onInterim) opts.onInterim(interim);
   };
@@ -194,4 +197,50 @@ export function speechMatches(target: string, heard: string): boolean {
   if (similarEnough(t, h)) return true;
   if (tWords.length === 1) return hWords.some((w) => similarEnough(t, w));
   return false;
+}
+
+export type PronunciationStars = 0 | 1 | 2 | 3;
+
+export function pronunciationScore(target: string, heard: string): { stars: PronunciationStars; ok: boolean } {
+  const t = normalizeSpoken(target);
+  const h = normalizeSpoken(heard);
+  if (!t || !h) return { stars: 0, ok: false };
+  if (t === h) return { stars: 3, ok: true };
+
+  const tWords = t.split(" ");
+  const hWords = h.split(" ");
+  let windowExact = false;
+  if (hWords.length >= tWords.length) {
+    for (let i = 0; i <= hWords.length - tWords.length; i++) {
+      if (hWords.slice(i, i + tWords.length).join(" ") === t) windowExact = true;
+    }
+  }
+  if (windowExact) return { stars: 3, ok: true };
+
+  if (speechMatches(target, heard)) {
+    const dist = levenshtein(t, h);
+    const maxLen = Math.max(t.length, h.length);
+    const sim = 1 - dist / maxLen;
+    if (sim >= 0.78) return { stars: 2, ok: true };
+    return { stars: 1, ok: true };
+  }
+
+  const dist = levenshtein(t, h);
+  const maxLen = Math.max(t.length, h.length);
+  const sim = 1 - dist / maxLen;
+  if (sim >= 0.55) return { stars: 1, ok: false };
+  return { stars: 0, ok: false };
+}
+
+export function pickBestHeard(target: string, heard: string, alternatives: string[] = []): string {
+  let best = heard;
+  let bestStars = pronunciationScore(target, heard).stars;
+  for (const alt of alternatives) {
+    const stars = pronunciationScore(target, alt).stars;
+    if (stars > bestStars) {
+      best = alt;
+      bestStars = stars;
+    }
+  }
+  return best;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeSpoken, speechMatches } from "./speech";
+import { normalizeSpoken, pickBestHeard, pronunciationScore, speechMatches } from "./speech";
 
 describe("normalizeSpoken", () => {
   it("strips punctuation and extra spaces", () => {
@@ -37,5 +37,28 @@ describe("speechMatches", () => {
   it("rejects empty input", () => {
     expect(speechMatches("hello", "")).toBe(false);
     expect(speechMatches("", "hello")).toBe(false);
+  });
+});
+
+describe("pronunciationScore", () => {
+  it("scores an exact match as three stars", () => {
+    expect(pronunciationScore("thank you", "Thank you!")).toEqual({ stars: 3, ok: true });
+  });
+
+  it("still passes a close pronunciation with fewer stars", () => {
+    const score = pronunciationScore("hello", "helo");
+    expect(score.ok).toBe(true);
+    expect(score.stars).toBeGreaterThanOrEqual(1);
+    expect(score.stars).toBeLessThan(3);
+  });
+
+  it("fails a totally different word", () => {
+    expect(pronunciationScore("elephant", "pizza").ok).toBe(false);
+  });
+});
+
+describe("pickBestHeard", () => {
+  it("picks the alternative closest to the target", () => {
+    expect(pickBestHeard("hello", "yellow", ["hello", "halo"])).toBe("hello");
   });
 });
