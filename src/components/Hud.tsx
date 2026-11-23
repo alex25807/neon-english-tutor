@@ -9,7 +9,7 @@ export default function Hud({ state, tab, onTab, onSettings, onExit, dueCount }:
   const li = levelInfo(state.xp);
   const tabs: { id: Tab; label: string; icon: ReactNode; badge?: number }[] = [
     { id: "map", label: "Карта", icon: <IconMap className="w-4 h-4" />, badge: dueCount },
-    { id: "chat", label: "Чат с Вольтом", icon: <IconChat className="w-4 h-4" /> },
+    { id: "chat", label: "Чат и голос", icon: <IconChat className="w-4 h-4" /> },
     { id: "progress", label: "Успехи", icon: <IconTrophy className="w-4 h-4" /> },
   ];
   return (

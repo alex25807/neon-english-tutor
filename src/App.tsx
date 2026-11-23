@@ -124,6 +124,16 @@ export default function App() {
     setState(next);
     pushToast({ title: "Сердце в запасе!", desc: "Сработает в следующем квесте", tone: "gold" });
   };
+  const speakSuccess = (stars: 2 | 3) => {
+    const drafted: GameState = { ...state, speakDone: state.speakDone + 1, xp: state.xp + (stars === 3 ? 4 : 2), coins: state.coins + (stars === 3 ? 1 : 0) };
+    const unlocked = checkAchievements(drafted);
+    setState(unlocked.length ? { ...drafted, achievements: [...drafted.achievements, ...unlocked] } : drafted);
+    if (stars === 3) pushToast({ title: "Произношение огонь!", desc: "+4 XP", tone: "lime" });
+    for (const id of unlocked) {
+      const a = ACHIEVEMENTS.find((x) => x.id === id);
+      if (a) pushToast({ title: a.name, desc: a.desc, tone: "gold" });
+    }
+  };
 
   if (!state.profile) return (<><SpaceBg /><Onboarding onComplete={handleOnboarding} state={state} onPatch={(p: Partial<Settings>) => setState((s: GameState) => ({ ...s, settings: { ...s.settings, ...p } }))} /></>);
 
@@ -137,7 +147,7 @@ export default function App() {
           <Hud state={state} tab={tab} onTab={goTab} onSettings={() => setSettingsOpen(true)} onExit={() => setExitConfirm(true)} dueCount={dueCount} />
           <main className="relative z-10">
             {tab === "map" && <QuestMap state={state} onStart={(zone: Zone, quest: QuestDef) => startQuest(zone, quest)} onReview={() => startQuest(ZONES[0], null)} onLocked={(msg: string) => pushToast({ title: "Заперто!", desc: msg, tone: "pink" })} />}
-            {tab === "chat" && <ChatPanel state={state} onAppend={(msgs: ChatMsg[]) => setState((s: GameState) => ({ ...s, chat: [...s.chat, ...msgs].slice(-120) }))} onToast={pushToast} />}
+            {tab === "chat" && <ChatPanel state={state} onAppend={(msgs: ChatMsg[]) => setState((s: GameState) => ({ ...s, chat: [...s.chat, ...msgs].slice(-120) }))} onToast={pushToast} onSpeakSuccess={speakSuccess} />}
             {tab === "progress" && <ProgressTab state={state} onBuyHeart={buyHeart} />}
           </main>
         </>

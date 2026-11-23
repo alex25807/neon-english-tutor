@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { DICT_EN, DICT_RU, GRAMMAR_TIPS, SENTENCES } from "../game/content";
 import { speak, startListening, sttSupported, stopSpeaking, ttsSupported } from "../game/speech";
 import type { ChatMsg, GameState, Toast } from "../game/types";
+import VoicePractice from "./VoicePractice";
 import { IconMic, IconSend, IconSpeaker, VoltRobot } from "./icons";
-import { NeonButton } from "./ui";
+import { Chip, NeonButton } from "./ui";
 
 const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 function exampleFor(en: string): { en: string; ru: string } | null {
@@ -11,7 +12,31 @@ function exampleFor(en: string): { en: string; ru: string } | null {
   return s ? { en: s.en, ru: s.ru } : null;
 }
 
-export default function ChatPanel({ state, onAppend, onToast }: { state: GameState; onAppend: (msgs: ChatMsg[]) => void; onToast: (t: Omit<Toast, "id">) => void }) {
+export default function ChatPanel({ state, onAppend, onToast, onSpeakSuccess }: {
+  state: GameState;
+  onAppend: (msgs: ChatMsg[]) => void;
+  onToast: (t: Omit<Toast, "id">) => void;
+  onSpeakSuccess: (stars: 2 | 3) => void;
+}) {
+  const [mode, setMode] = useState<"speak" | "talk">("speak");
+  useEffect(() => { if (mode === "talk") stopSpeaking(); }, [mode]);
+  return (
+    <div className="px-4 max-w-3xl mx-auto w-full py-6">
+      <div className="flex gap-2 mb-4">
+        <Chip active={mode === "speak"} onClick={() => setMode("speak")}>Говори по-английски</Chip>
+        <Chip active={mode === "talk"} onClick={() => setMode("talk")}>Поболтать</Chip>
+      </div>
+      <div className={mode === "speak" ? "" : "hidden"}>
+        <VoicePractice state={state} onAppend={onAppend} onToast={onToast} onSpeakSuccess={onSpeakSuccess} />
+      </div>
+      <div className={mode === "talk" ? "" : "hidden"}>
+        <TalkChat state={state} onAppend={onAppend} onToast={onToast} />
+      </div>
+    </div>
+  );
+}
+
+function TalkChat({ state, onAppend, onToast }: { state: GameState; onAppend: (msgs: ChatMsg[]) => void; onToast: (t: Omit<Toast, "id">) => void }) {
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [interim, setInterim] = useState("");
@@ -37,7 +62,7 @@ export default function ChatPanel({ state, onAppend, onToast }: { state: GameSta
   };
 
   const buildReply = (lower: string): { msgs: string[]; enWord?: string } => {
-    if (/привет|hello|hi|хай/.test(lower)) return { msgs: ["Hello! Рад тебя видеть! Как дела?", "Попробуй написать: I am fine!"], enWord: "Hello" };
+    if (/привет|hello|hi|хай/.test(lower)) return { msgs: ["Hello! Рад тебя видеть! Как дела?", "Попробуй сказать вслух: I am fine!"], enWord: "Hello" };
     if (/как дела|how are/.test(lower)) return { msgs: ["I am fine, thanks! А ты?", "I am fine — Я в порядке. Повтори за мной!"], enWord: "I am fine" };
     if (/пока|bye|goodbye/.test(lower)) return { msgs: ["Goodbye! До встречи, герой!", "Возвращайся скорее — у нас ещё много квестов!"], enWord: "Goodbye" };
     if (/спасибо|thank/.test(lower)) return { msgs: ["You are welcome! Пожалуйста!", "You are welcome — Пожалуйста. Запомни!"], enWord: "You are welcome" };
@@ -55,7 +80,7 @@ export default function ChatPanel({ state, onAppend, onToast }: { state: GameSta
       if (k.length < 3) continue;
       if (lower.includes(k)) { const w = DICT_RU[k]; return { msgs: [w.ru + " по-английски — " + w.en + ". Скажи это вслух три раза!"], enWord: w.en }; }
     }
-    return { msgs: ["Интересно! Я лучше всего понимаю английские слова из нашего квеста. Напиши, например: cat, apple или расскажи правило."] };
+    return { msgs: ["Интересно! Я лучше всего понимаю английские слова из нашего квеста. Напиши, например: cat, apple — или открой вкладку «Говори по-английски»."] };
   };
 
   const toggleMic = () => {
@@ -66,23 +91,21 @@ export default function ChatPanel({ state, onAppend, onToast }: { state: GameSta
   };
 
   return (
-    <div className="px-4 max-w-3xl mx-auto w-full py-6">
-      <div className="bg-deep/90 border-2 border-edge rounded-3xl overflow-hidden flex flex-col" style={{ height: "calc(100vh - 220px)", minHeight: "500px" }}>
-        <div className="px-5 py-4 border-b-2 border-edge flex items-center gap-3 bg-panel/50"><VoltRobot mood="happy" className="w-12 h-12 anim-bobble" /><div><div className="font-display text-neon uppercase tracking-wider text-sm">Вольт</div><div className="text-white/50 font-bold text-xs">Твой робот-наставник</div></div></div>
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-          {state.chat.length === 0 && (<div className="text-center py-12"><VoltRobot mood="cool" className="w-20 h-20 mx-auto anim-bobble" /><p className="text-white/60 font-bold text-sm mt-4 max-w-sm mx-auto">Привет! Я Вольт — твой робот-наставник. Спроси меня про слово, правило или просто поболтай!</p></div>)}
-          {state.chat.map((m) => (<div key={m.id} className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}><div className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${m.from === "me" ? "bg-neon text-[#04252b] font-extrabold" : "bg-panel border-2 border-edge text-white"}`}><p className="text-sm leading-snug">{m.text}</p>{m.from === "volt" && ttsSupported && state.settings.voiceOn && <button onClick={() => speak(m.text, { lang: "ru-RU", rate: state.settings.rate + 0.1, gender: state.settings.voiceGender })} className="mt-1 text-[10px] font-extrabold text-neon hover:text-white transition-colors inline-flex items-center gap-1"><IconSpeaker className="w-3 h-3" /> Озвучить</button>}</div></div>))}
-          {listening && interim && <div className="flex justify-start"><div className="max-w-[80%] rounded-2xl px-4 py-2.5 bg-panel border-2 border-neon/50 text-neon/70 font-bold text-sm italic">Слышу: {interim}...</div></div>}
-          <div ref={endRef} />
+    <div className="bg-deep/90 border-2 border-edge rounded-3xl overflow-hidden flex flex-col" style={{ height: "calc(100vh - 268px)", minHeight: "500px" }}>
+      <div className="px-5 py-4 border-b-2 border-edge flex items-center gap-3 bg-panel/50"><VoltRobot mood="happy" className="w-12 h-12 anim-bobble" /><div><div className="font-display text-neon uppercase tracking-wider text-sm">Вольт</div><div className="text-white/50 font-bold text-xs">Спроси слово или правило — можно голосом</div></div></div>
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        {state.chat.length === 0 && (<div className="text-center py-12"><VoltRobot mood="cool" className="w-20 h-20 mx-auto anim-bobble" /><p className="text-white/60 font-bold text-sm mt-4 max-w-sm mx-auto">Привет! Я Вольт. Спроси про слово, правило — или переключись на «Говори по-английски», чтобы тренировать произношение.</p></div>)}
+        {state.chat.map((m) => (<div key={m.id} className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}><div className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${m.from === "me" ? "bg-neon text-[#04252b] font-extrabold" : "bg-panel border-2 border-edge text-white"}`}><p className="text-sm leading-snug">{m.text}</p>{m.from === "volt" && ttsSupported && state.settings.voiceOn && <button onClick={() => speak(m.text, { lang: "ru-RU", rate: state.settings.rate + 0.1, gender: state.settings.voiceGender })} className="mt-1 text-[10px] font-extrabold text-neon hover:text-white transition-colors inline-flex items-center gap-1"><IconSpeaker className="w-3 h-3" /> Озвучить</button>}</div></div>))}
+        {listening && interim && <div className="flex justify-start"><div className="max-w-[80%] rounded-2xl px-4 py-2.5 bg-panel border-2 border-neon/50 text-neon/70 font-bold text-sm italic">Слышу: {interim}...</div></div>}
+        <div ref={endRef} />
+      </div>
+      <div className="px-4 py-3 border-t-2 border-edge bg-panel/50">
+        <div className="flex gap-2">
+          <button onClick={toggleMic} className={`btn-arcade w-12 h-12 rounded-xl border-2 flex items-center justify-center shrink-0 ${listening ? "bg-hot border-[#ff9bae] text-white" : "bg-panel2 border-edge text-white/60 hover:text-neon hover:border-neon/60"}`} aria-label="Говорить"><IconMic className="w-5 h-5" /></button>
+          <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && processInput(input)} placeholder="Напиши сообщение..." className="flex-1 bg-panel border-2 border-edge rounded-xl px-4 py-2.5 font-extrabold text-sm text-white placeholder:text-white/30 outline-none focus:border-neon transition-colors" />
+          <NeonButton tone="cyan" onClick={() => processInput(input)} disabled={!input.trim()}><IconSend className="w-4 h-4" /></NeonButton>
         </div>
-        <div className="px-4 py-3 border-t-2 border-edge bg-panel/50">
-          <div className="flex gap-2">
-            <button onClick={toggleMic} className={`btn-arcade w-12 h-12 rounded-xl border-2 flex items-center justify-center shrink-0 ${listening ? "bg-hot border-[#ff9bae] text-white" : "bg-panel2 border-edge text-white/60 hover:text-neon hover:border-neon/60"}`} aria-label="Говорить"><IconMic className="w-5 h-5" /></button>
-            <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && processInput(input)} placeholder="Напиши сообщение..." className="flex-1 bg-panel border-2 border-edge rounded-xl px-4 py-2.5 font-extrabold text-sm text-white placeholder:text-white/30 outline-none focus:border-neon transition-colors" />
-            <NeonButton tone="cyan" onClick={() => processInput(input)} disabled={!input.trim()}><IconSend className="w-4 h-4" /></NeonButton>
-          </div>
-          {!sttSupported && <p className="text-white/30 font-bold text-[10px] mt-2 text-center">Микрофон недоступен в этом браузере</p>}
-        </div>
+        {!sttSupported && <p className="text-white/30 font-bold text-[10px] mt-2 text-center">Микрофон недоступен в этом браузере</p>}
       </div>
     </div>
   );
